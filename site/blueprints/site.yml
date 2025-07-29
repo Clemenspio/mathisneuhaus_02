@@ -1,0 +1,51 @@
+title: Site
+tabs:
+  content:
+    label: Content
+    sections:
+      folders:
+        type: pages
+        label: Folders
+        status: all
+        template: folder
+        create:
+          - folder
+      textfiles:
+        type: pages
+        label: Text Files
+        status: all
+        template: textfile
+        create:
+          - textfile
+      links:
+        type: pages
+        label: External Links
+        status: all
+        template: externallink
+        create:
+          - externallink
+      files:
+        type: files
+        label: Media Files
+        layout: cards
+  contact:
+    label: Contact
+    sections:
+      about:
+        type: pages
+        label: About/Contact Information
+        template: about
+        max: 1
+        create:
+          - about
+  desktop:
+    label: Desktop Images
+    sections:
+      desktop_images:
+        type: files
+        label: Background Images
+        layout: cards
+        info: "{{ file.dimensions }} - {{ file.niceSize }}"
+        accept:
+          extension: jpg, jpeg, png, gif, webp
+        help: Upload background images for the desktop. One will be randomly selected each time the page loads.

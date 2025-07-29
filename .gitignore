@@ -1,0 +1,5 @@
+/site/cache/
+/site/sessions/
+/site/accounts/
+.DS_Store
+Thumbs.db

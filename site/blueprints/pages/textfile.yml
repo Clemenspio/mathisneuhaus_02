@@ -1,0 +1,14 @@
+title: Text File
+icon: 📄
+fields:
+  content:
+    label: Content
+    type: textarea
+    size: large
+    buttons:
+      - bold
+      - italic
+      - link
+      - ul
+      - ol
+    help: Write your text content here. It will appear as a text file in the finder.

@@ -1,0 +1,12 @@
+title: External Link
+icon: 🔗
+fields:
+  link_url:
+    label: URL
+    type: url
+    required: true
+    placeholder: https://example.com
+  link_title:
+    label: Display Title
+    type: text
+    help: Optional - leave empty to use the page title

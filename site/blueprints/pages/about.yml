@@ -1,0 +1,7 @@
+title: About
+fields:
+  about_text:
+    label: About/Contact Text
+    type: textarea
+    size: large
+    required: true 
