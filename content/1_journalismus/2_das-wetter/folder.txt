@@ -1,9 +1,0 @@
-Title: Das Wetter
-
-----
-
-Hover-image: - file://ikrwokmnvwvewxzb
-
-----
-
-Uuid: nlisvgutddvhswsl

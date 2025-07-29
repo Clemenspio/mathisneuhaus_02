@@ -1,9 +1,0 @@
-Title: diaphanes
-
-----
-
-Hover-image: - file://ohewahludnlxum5v
-
-----
-
-Uuid: 7qukglaiizqhl6pn
