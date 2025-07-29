@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'debug' => false, // ⚠️ WICHTIG: auf false setzen!
+    'debug' => false,
     
     'api' => [
         'basicAuth' => false,
-        'allowInsecure' => false, // ⚠️ auf false setzen!
+        'allowInsecure' => false,
         'routes' => [
             [
                 'pattern' => 'content',
@@ -15,9 +15,9 @@ return [
                     $site = site();
                     $items = [];
                     
-                    // Get all folders - BLEIBT GLEICH
+                    // Get all folders
                     foreach ($site->children() as $child) {
-                        // NEU: Versteckte Ordner (mit _) überspringen
+                        // Skip hidden folders (starting with _)
                         if (str_starts_with($child->slug(), '_')) {
                             continue;
                         }
@@ -31,7 +31,6 @@ return [
                                 'item_count' => $child->children()->count() + $child->files()->count()
                             ];
                             
-                            // ÄNDERUNG: hover_image zu hover_background_images
                             if ($child->hover_background_images()->isNotEmpty() && $child->hover_background_images()->toFile()) {
                                 $item['hover_thumbnail_url'] = $child->hover_background_images()->toFile()->url();
                             }
@@ -64,7 +63,12 @@ return [
                             continue;
                         }
                         
-                        // ÄNDERUNG: Check mit hover_background_images statt hover_image
+                        // NEU: Template-Check für hover-background-image
+                        if ($file->template() === 'hover-background-image') {
+                            continue;
+                        }
+                        
+                        // Existing check for hover images (als zusätzliche Sicherheit)
                         $isHoverImage = false;
                         foreach ($site->children() as $child) {
                             if ($child->intendedTemplate() == 'folder' && $child->hover_background_images()->isNotEmpty()) {
@@ -129,7 +133,7 @@ return [
                     $items = [];
                     
                     foreach ($currentPage->children() as $child) {
-                        // NEU: Versteckte Ordner überspringen
+                        // Skip hidden folders
                         if (str_starts_with($child->slug(), '_')) {
                             continue;
                         }
@@ -143,7 +147,6 @@ return [
                                 'item_count' => $child->children()->count() + $child->files()->count()
                             ];
                             
-                            // ÄNDERUNG: hover_image zu hover_background_images
                             if ($child->hover_background_images()->isNotEmpty() && $child->hover_background_images()->toFile()) {
                                 $item['hover_thumbnail_url'] = $child->hover_background_images()->toFile()->url();
                             }
@@ -176,10 +179,14 @@ return [
                             continue;
                         }
                         
-                        // ÄNDERUNG: Check mit hover_background_images
-                        $isHoverImage = false;
+                        // NEU: Template-Check für hover-background-image
+                        if ($file->template() === 'hover-background-image') {
+                            continue;
+                        }
                         
                         // Check if file is used as hover image in current page
+                        $isHoverImage = false;
+                        
                         if ($currentPage->hover_background_images()->isNotEmpty()) {
                             $hoverFile = $currentPage->hover_background_images()->toFile();
                             if ($hoverFile && $hoverFile->id() === $file->id()) {
@@ -236,7 +243,6 @@ return [
                 }
             ],
             
-            // Contact und About bleiben EXAKT GLEICH
             [
                 'pattern' => 'contact',
                 'method' => 'GET',
@@ -305,10 +311,8 @@ return [
                 'method' => 'GET',
                 'auth' => false,
                 'action' => function () {
-                    // VEREINFACHT! Holt Bilder direkt aus dem content/_desktop-images Ordner
                     $images = [];
                     
-                    // Direkter Pfad zu den Desktop-Images
                     $desktopPath = kirby()->root('content') . '/_desktop-images';
                     
                     if (is_dir($desktopPath)) {
