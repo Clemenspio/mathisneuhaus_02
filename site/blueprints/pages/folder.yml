@@ -32,6 +32,8 @@ columns:
         label: Media Files
         layout: cards
         info: "{{ file.type }} - {{ file.niceSize }}"
+        accept:
+          extension: jpg, jpeg, png, gif, webp, heic, heif
   - width: 1/3
     fields:
       hover_image:

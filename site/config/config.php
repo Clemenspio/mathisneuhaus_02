@@ -357,5 +357,30 @@ return [
                 '1200w' => ['width' => 1200, 'quality' => 80]
             ]
         ]
+    ],
+    
+    // HEIC-Konvertierung Plugin-Konfiguration
+    'heic-convert.path' => '/usr/bin/sips',
+    
+    // HEIC-Dateityp registrieren
+    'fileTypes' => [
+        'heic' => [
+            'mime' => 'image/heic',
+            'extensions' => ['heic', 'heif']
+        ]
+    ],
+    
+    // Datei-Upload-Konfiguration
+    'files' => [
+        'types' => [
+            'heic' => [
+                'mime' => 'image/heic',
+                'extensions' => ['heic', 'heif']
+            ]
+        ],
+        'accept' => [
+            'image/heic',
+            'image/heif'
+        ]
     ]
 ];
