@@ -45,7 +45,7 @@
   /* Main Finder Interface */
   .finder-interface {
     position: relative;
-    z-index: 10;
+    z-index: 2;
     height: 100vh;
     display: flex;
     align-items: center;
@@ -129,7 +129,7 @@
   .items-list {
     padding: 8px 0;
     position: relative;
-    z-index: 5;
+    z-index: 3;
   }
   
   .finder-item {
@@ -160,7 +160,7 @@
     align-items: center;
     gap: 12px;
     position: relative;
-    z-index: 2;
+    z-index: 3;
   }
   
   .item-details {
@@ -230,6 +230,7 @@
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
+    z-index: 1000;
   }
   
   .overlay-base.active {
@@ -240,7 +241,7 @@
   /* Image Overlay */
   .image-overlay {
     background: rgba(0, 0, 0, 0.3);
-    z-index: 2000;
+    z-index: 1000;
   }
   
   .image-container {
@@ -278,6 +279,7 @@
     flex-direction: column;
     color: #FFFFFF;
     transition: opacity 0.3s ease;
+    z-index: 1000;
   }
   
   .about-header {
@@ -317,7 +319,7 @@
   /* Modal Overlay */
   .modal-overlay {
     background: rgba(0, 0, 0, 0.8);
-    z-index: 2000;
+    z-index: 1000;
   }
   
   .modal-content {
@@ -428,7 +430,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: 1;
+    z-index: 0;
   }
   
   .finder-hover-bg {
@@ -441,7 +443,7 @@
     background-position: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 1;
+    z-index: 4;
     pointer-events: none;
     border-radius: 12px;
   }
