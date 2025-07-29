@@ -183,16 +183,13 @@
             }
             
             const icon = getIcon(item.type);
-            const subtitle = getSubtitle(item);
             
             itemDiv.innerHTML = `
                 <div class="item-content">
                     <div class="item-icon">${icon}</div>
                     <div class="item-details">
                         <div class="item-name">${item.name}</div>
-                        ${subtitle ? `<div class="item-subtitle">${subtitle}</div>` : ''}
                     </div>
-                    ${item.type === 'folder' ? '<div class="folder-arrow">▶</div>' : ''}
                 </div>
             `;
             
@@ -302,30 +299,18 @@
         // Get icon for item type
         function getIcon(type) {
             const icons = {
-                folder: '📁',
-                textfile: '📄',
+                folder: '<img src="/assets/icons/Folder.svg" alt="Folder" class="svg-icon">',
+                textfile: '<img src="/assets/icons/Textfile.svg" alt="Textfile" class="svg-icon">',
                 externallink: '🔗',
                 image: '🖼️',
                 document: '📑',
                 audio: '🎵',
                 video: '🎬'
             };
-            return icons[type] || '📄';
+            return icons[type] || '<img src="/assets/icons/Textfile.svg" alt="File" class="svg-icon">';
         }
 
-        // Get subtitle for item
-        function getSubtitle(item) {
-            if (item.type === 'folder' && item.item_count !== undefined) {
-                return `${item.item_count} items`;
-            }
-            if (item.size) {
-                return item.size;
-            }
-            if (item.dimensions) {
-                return item.dimensions;
-            }
-            return null;
-        }
+
 
 
 
@@ -460,7 +445,12 @@
             
             image.src = imageUrl;
             overlay.style.display = 'flex';
-            overlay.classList.add('active');
+            
+            // Trigger fade in
+            setTimeout(() => {
+                overlay.classList.add('active');
+            }, 10);
+            
             console.log('Image overlay should be visible now');
         }
         
@@ -469,9 +459,15 @@
             console.log('hideImageOverlay called');
             const overlay = document.getElementById('imageOverlay');
             if (overlay) {
+                // Start fade out
                 overlay.classList.remove('active');
-                overlay.style.display = 'none';
-                console.log('Image overlay hidden');
+                
+                // Hide after fade completes
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+                
+                console.log('Image overlay fading out');
             } else {
                 console.error('Image overlay element not found');
             }
