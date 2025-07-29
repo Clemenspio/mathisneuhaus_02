@@ -1,125 +1,102 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $page->title() ?> - Finder</title>
-    <link rel="stylesheet" href="<?= url('assets/css/main.css') ?>">
-</head>
-<body>
-    <div class="finder-container">
-        <div class="finder-header">
-            <h1 class="finder-title"><?= $page->title() ?></h1>
-            <?php if ($page->description()->isNotEmpty()): ?>
-                <p><?= $page->description() ?></p>
-            <?php endif; ?>
+<?php
+/**
+ * Finder Snippet
+ * 
+ * Dieses Snippet generiert die Finder-Ansicht für Projekte und Dateien.
+ * Hover Background Images werden automatisch aus der Anzeige gefiltert.
+ * 
+ * Verwendung: <?php snippet('finder', ['pages' => $pages]) ?>
+ */
+
+// Default pages falls keine übergeben wurden
+$pages = $pages ?? site()->children()->visible();
+?>
+
+<div class="finder-container">
+    <?php foreach($pages as $item): ?>
+        <div class="finder-item" 
+             data-hover-bg="<?= $item->hover_background_images()->toFile() ? $item->hover_background_images()->toFile()->url() : '' ?>"
+             data-url="<?= $item->url() ?>">
             
-            <!-- Breadcrumb Navigation -->
-            <div class="breadcrumb">
-                <a href="<?= $site->url() ?>" class="breadcrumb-item">🏠 Start</a>
-                <?php 
-                $parents = $page->parents();
-                foreach ($parents as $parent): ?>
-                    <span class="breadcrumb-separator">/</span>
-                    <a href="<?= $parent->url() ?>" class="breadcrumb-item"><?= $parent->title() ?></a>
-                <?php endforeach; ?>
-                <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current"><?= $page->title() ?></span>
+            <!-- Folder/Page Icon und Name -->
+            <div class="finder-item-header">
+                <span class="finder-icon">📁</span>
+                <span class="finder-name"><?= $item->title() ?></span>
             </div>
-        </div>
-        
-        <div class="finder-content">
-            <?php 
-            $children = $page->children();
-            $files = $page->files();
-            
-            if ($children->count() > 0 || $files->count() > 0): ?>
-                <div class="finder-grid">
-                    <!-- Ordner anzeigen -->
-                    <?php foreach ($children as $child): ?>
-                        <a href="<?= $child->url() ?>" class="finder-item">
-                            <?php 
-                            $icon = '📁';
-                            if ($child->intendedTemplate() === 'folder' && $child->icon()->isNotEmpty()) {
-                                $iconMap = [
-                                    'folder' => '📁',
-                                    'documents' => '📄',
-                                    'images' => '🖼️',
-                                    'music' => '🎵',
-                                    'videos' => '🎬',
-                                    'downloads' => '⬇️',
-                                    'applications' => '🖥️'
-                                ];
-                                $icon = $iconMap[$child->icon()->value()] ?? '📁';
-                            } elseif ($child->intendedTemplate() === 'document') {
-                                $icon = '📄';
-                            } elseif ($child->intendedTemplate() === 'image') {
-                                $icon = '🖼️';
-                            } elseif ($child->intendedTemplate() === 'link') {
-                                $icon = '🔗';
-                            }
-                            ?>
-                            <span class="finder-item-icon"><?= $icon ?></span>
-                            <div class="finder-item-title"><?= $child->title() ?></div>
-                            <div class="finder-item-type">
-                                <?php 
-                                $typeMap = [
-                                    'folder' => 'Ordner',
-                                    'document' => 'Dokument',
-                                    'image' => 'Bild',
-                                    'link' => 'Link'
-                                ];
-                                echo $typeMap[$child->intendedTemplate()] ?? 'Seite';
-                                ?>
+
+            <!-- Zeige Dateien innerhalb des Folders, aber NICHT die Hover Background Images -->
+            <?php if($item->hasFiles()): ?>
+                <?php 
+                // WICHTIG: Hier filtern wir die Hover Background Images raus
+                $visibleFiles = $item->files()->filter(function($file) {
+                    return $file->template() !== 'hover-background-image';
+                });
+                ?>
+                
+                <?php if($visibleFiles->count() > 0): ?>
+                    <div class="finder-item-files">
+                        <?php foreach($visibleFiles as $file): ?>
+                            <div class="finder-file" data-url="<?= $file->url() ?>">
+                                <?php if($file->type() == 'image'): ?>
+                                    <span class="file-icon">🖼️</span>
+                                <?php elseif($file->type() == 'video'): ?>
+                                    <span class="file-icon">🎬</span>
+                                <?php elseif($file->type() == 'document'): ?>
+                                    <span class="file-icon">📄</span>
+                                <?php else: ?>
+                                    <span class="file-icon">📎</span>
+                                <?php endif ?>
+                                <span class="file-name"><?= $file->filename() ?></span>
                             </div>
-                            <?php if ($child->description()->isNotEmpty()): ?>
-                                <div class="finder-item-description"><?= $child->description() ?></div>
-                            <?php endif; ?>
-                        </a>
-                    <?php endforeach; ?>
-                    
-                    <!-- Dateien anzeigen -->
-                    <?php foreach ($files as $file): ?>
-                        <a href="<?= $file->url() ?>" class="finder-item" target="_blank">
-                            <?php 
-                            $icon = '📎';
-                            $extension = $file->extension();
-                            $iconMap = [
-                                'pdf' => '📋',
-                                'doc' => '📝',
-                                'docx' => '📝',
-                                'xls' => '📊',
-                                'xlsx' => '📊',
-                                'ppt' => '📽️',
-                                'pptx' => '📽️',
-                                'jpg' => '🖼️',
-                                'jpeg' => '🖼️',
-                                'png' => '🖼️',
-                                'gif' => '🖼️',
-                                'mp4' => '🎬',
-                                'mov' => '🎬',
-                                'mp3' => '🎵',
-                                'wav' => '🎵',
-                                'zip' => '📦',
-                                'txt' => '📄'
-                            ];
-                            $icon = $iconMap[$extension] ?? '📎';
-                            ?>
-                            <span class="finder-item-icon"><?= $icon ?></span>
-                            <div class="finder-item-title"><?= $file->name() ?></div>
-                            <div class="finder-item-type"><?= strtoupper($extension) ?> Datei</div>
-                            <div class="finder-item-description"><?= $file->niceSize() ?></div>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="empty-state">
-                    <div class="empty-state-icon">📁</div>
-                    <h3>Dieser Ordner ist leer</h3>
-                    <p>Fügen Sie Ordner oder Dateien hinzu, um zu beginnen.</p>
-                </div>
-            <?php endif; ?>
+                        <?php endforeach ?>
+                    </div>
+                <?php endif ?>
+            <?php endif ?>
+
+            <!-- Zeige Unterseiten/Subfolders -->
+            <?php if($item->hasChildren()): ?>
+                <?php 
+                $visibleChildren = $item->children()->visible();
+                if($visibleChildren->count() > 0): 
+                ?>
+                    <div class="finder-item-subfolders">
+                        <?php snippet('finder', ['pages' => $visibleChildren]) ?>
+                    </div>
+                <?php endif ?>
+            <?php endif ?>
         </div>
-    </div>
-</body>
-</html> 
+    <?php endforeach ?>
+</div>
+
+<style>
+/* Hover Background Effect */
+.finder-item:hover {
+    /* Der Hover-Background wird via JavaScript gesetzt */
+}
+
+.finder-item[data-hover-bg]:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+    z-index: -1;
+    pointer-events: none;
+}
+</style>
+
+<script>
+// Setze Hover-Backgrounds dynamisch
+document.querySelectorAll('.finder-item[data-hover-bg]').forEach(item => {
+    const hoverBg = item.getAttribute('data-hover-bg');
+    if (hoverBg) {
+        item.addEventListener('mouseenter', function() {
+            this.style.setProperty('--hover-bg', `url(${hoverBg})`);
+        });
+    }
+});
+</script>
