@@ -54,34 +54,32 @@
   }
   
   .finder-container {
-    background: #FFFFFF;
-    border: 3px solid #F2F2F2;
-    box-shadow: 10px 14px 14px rgba(0, 0, 0, 0.35);
-    border-radius: 24px;
-    width: 80%;
-    height: 80%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
+  background: #FFFFFF;
+  border: 3px solid #F2F2F2;
+  box-shadow: 10px 14px 14px rgba(0, 0, 0, 0.35);
+  border-radius: 24px;
+  width: 80%;
+  height: 80%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
   
   /* ==========================================================================
      4. FINDER COMPONENTS
      ========================================================================== */
   
   /* Finder Header */
-  .finder-header {
-    background: #FFFFFF;
-    border-bottom: 1px solid #E5E5E5;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 3;
-  }
+.finder-header {
+  background: #FFFFFF;
+  border-bottom: 1px solid #E5E5E5;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
   
   .site-title {
     font-size: 20px;
@@ -96,22 +94,18 @@
   }
   
   /* Finder Main Area */
-  .finder-main {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-  }
+.finder-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
   
   .finder-columns {
-    display: flex;
-    overflow-x: auto;
-    flex: 1;
-    scroll-behavior: smooth;
-    position: relative;
-    z-index: 2;
-  }
+  display: flex;
+  overflow-x: auto;
+  flex: 1;
+  scroll-behavior: smooth;
+}
   
   .finder-column {
     min-width: 280px;
@@ -129,35 +123,31 @@
   
   
   /* Finder Items */
-  .items-list {
-    padding: 8px 0;
-    position: relative;
-    z-index: 2;
-  }
+.items-list {
+  padding: 8px 0;
+  position: relative;
+  z-index: 3;
+}
   
   .finder-item {
-    padding: 8px 16px;
-    cursor: pointer;
-    border-bottom: 1px solid #F2F2F7;
-    transition: all 0.4s ease;
-    position: relative;
-    overflow: hidden;
-    mix-blend-mode: multiply;
-    background: #FFFFFF;
-  }
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #F2F2F7;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
   
   .finder-item:hover {
-    background-color: #000000;
-    transform: translateX(2px);
-    color: #FFFFFF;
-    mix-blend-mode: multiply;
-  }
+  background-color: #000000;
+  transform: translateX(2px);
+  color: #FFFFFF;
+}
   
   .finder-item.selected {
-    background-color: #000000;
-    color: white;
-    mix-blend-mode: multiply;
-  }
+  background-color: #000000;
+  color: white;
+}
   
 
   
@@ -481,9 +471,10 @@
     background-position: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 1;
+    z-index: 4;
     pointer-events: none;
     border-radius: 12px;
+    mix-blend-mode: multiply;
   }
   
   .finder-hover-bg.active {
@@ -554,3 +545,7 @@
       padding: 20px;
     }
   }
+
+/* ==========================================================================
+   12. RESPONSIVE DESIGN
+   ========================================================================== */
