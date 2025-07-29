@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'debug' => false,
+    'debug' => false, // ⚠️ WICHTIG: auf false setzen!
     
     'api' => [
         'basicAuth' => false,
-        'allowInsecure' => false,
+        'allowInsecure' => false, // ⚠️ auf false setzen!
         'routes' => [
             [
                 'pattern' => 'content',
@@ -15,9 +15,9 @@ return [
                     $site = site();
                     $items = [];
                     
-                    // Get all folders
+                    // Get all folders - BLEIBT GLEICH
                     foreach ($site->children() as $child) {
-                        // Skip hidden folders (starting with _)
+                        // NEU: Versteckte Ordner (mit _) überspringen
                         if (str_starts_with($child->slug(), '_')) {
                             continue;
                         }
@@ -31,9 +31,9 @@ return [
                                 'item_count' => $child->children()->count() + $child->files()->count()
                             ];
                             
-                            // KORRIGIERT: hover_image statt hover_background_images
-                            if ($child->hover_image()->isNotEmpty() && $child->hover_image()->toFile()) {
-                                $item['hover_thumbnail_url'] = $child->hover_image()->toFile()->url();
+                            // ÄNDERUNG: hover_image zu hover_background_images
+                            if ($child->hover_background_images()->isNotEmpty() && $child->hover_background_images()->toFile()) {
+                                $item['hover_thumbnail_url'] = $child->hover_background_images()->toFile()->url();
                             }
                             
                             $items[] = $item;
@@ -64,16 +64,11 @@ return [
                             continue;
                         }
                         
-                        // Template-Check für hover-background-image
-                        if ($file->template() === 'hover-background-image') {
-                            continue;
-                        }
-                        
-                        // KORRIGIERT: Check mit hover_image
+                        // ÄNDERUNG: Check mit hover_background_images statt hover_image
                         $isHoverImage = false;
                         foreach ($site->children() as $child) {
-                            if ($child->intendedTemplate() == 'folder' && $child->hover_image()->isNotEmpty()) {
-                                $hoverFile = $child->hover_image()->toFile();
+                            if ($child->intendedTemplate() == 'folder' && $child->hover_background_images()->isNotEmpty()) {
+                                $hoverFile = $child->hover_background_images()->toFile();
                                 if ($hoverFile && $hoverFile->id() === $file->id()) {
                                     $isHoverImage = true;
                                     break;
@@ -134,7 +129,7 @@ return [
                     $items = [];
                     
                     foreach ($currentPage->children() as $child) {
-                        // Skip hidden folders
+                        // NEU: Versteckte Ordner überspringen
                         if (str_starts_with($child->slug(), '_')) {
                             continue;
                         }
@@ -148,9 +143,9 @@ return [
                                 'item_count' => $child->children()->count() + $child->files()->count()
                             ];
                             
-                            // KORRIGIERT: hover_image statt hover_background_images
-                            if ($child->hover_image()->isNotEmpty() && $child->hover_image()->toFile()) {
-                                $item['hover_thumbnail_url'] = $child->hover_image()->toFile()->url();
+                            // ÄNDERUNG: hover_image zu hover_background_images
+                            if ($child->hover_background_images()->isNotEmpty() && $child->hover_background_images()->toFile()) {
+                                $item['hover_thumbnail_url'] = $child->hover_background_images()->toFile()->url();
                             }
                             
                             $items[] = $item;
@@ -181,17 +176,12 @@ return [
                             continue;
                         }
                         
-                        // Template-Check für hover-background-image
-                        if ($file->template() === 'hover-background-image') {
-                            continue;
-                        }
-                        
-                        // KORRIGIERT: Check mit hover_image
+                        // ÄNDERUNG: Check mit hover_background_images
                         $isHoverImage = false;
                         
                         // Check if file is used as hover image in current page
-                        if ($currentPage->hover_image()->isNotEmpty()) {
-                            $hoverFile = $currentPage->hover_image()->toFile();
+                        if ($currentPage->hover_background_images()->isNotEmpty()) {
+                            $hoverFile = $currentPage->hover_background_images()->toFile();
                             if ($hoverFile && $hoverFile->id() === $file->id()) {
                                 $isHoverImage = true;
                             }
@@ -200,8 +190,8 @@ return [
                         // Also check children of current page
                         if (!$isHoverImage) {
                             foreach ($currentPage->children() as $child) {
-                                if ($child->intendedTemplate() == 'folder' && $child->hover_image()->isNotEmpty()) {
-                                    $hoverFile = $child->hover_image()->toFile();
+                                if ($child->intendedTemplate() == 'folder' && $child->hover_background_images()->isNotEmpty()) {
+                                    $hoverFile = $child->hover_background_images()->toFile();
                                     if ($hoverFile && $hoverFile->id() === $file->id()) {
                                         $isHoverImage = true;
                                         break;
@@ -246,6 +236,7 @@ return [
                 }
             ],
             
+            // Contact und About bleiben EXAKT GLEICH
             [
                 'pattern' => 'contact',
                 'method' => 'GET',
@@ -314,8 +305,10 @@ return [
                 'method' => 'GET',
                 'auth' => false,
                 'action' => function () {
+                    // VEREINFACHT! Holt Bilder direkt aus dem content/_desktop-images Ordner
                     $images = [];
                     
+                    // Direkter Pfad zu den Desktop-Images
                     $desktopPath = kirby()->root('content') . '/_desktop-images';
                     
                     if (is_dir($desktopPath)) {
@@ -342,6 +335,39 @@ return [
                         'status' => 'ok',
                         'message' => 'Found ' . count($images) . ' images',
                         'images' => $images
+                    ];
+                }
+            ],
+            
+            [
+                'pattern' => 'textfile-content/(:all)',
+                'method' => 'GET',
+                'auth' => false,
+                'action' => function ($path) {
+                    $textfile = page($path);
+                    
+                    if (!$textfile || $textfile->intendedTemplate() !== 'textfile') {
+                        return [
+                            'status' => 'error',
+                            'message' => 'Textfile not found'
+                        ];
+                    }
+                    
+                    // Read content directly from the textfile.txt file
+                    $contentFile = $textfile->root() . '/textfile.txt';
+                    $content = '';
+                    
+                    if (file_exists($contentFile)) {
+                        $content = file_get_contents($contentFile);
+                        // Extract the content after "content:" line
+                        if (preg_match('/content:\s*\n(.*?)(?=\n----|\nUuid:|$)/s', $content, $matches)) {
+                            $content = trim($matches[1]);
+                        }
+                    }
+                    
+                    return [
+                        'status' => 'ok',
+                        'content' => $content
                     ];
                 }
             ]

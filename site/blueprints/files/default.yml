@@ -1,6 +1,6 @@
 title: File
 accept:
-  extension: jpg, jpeg, png, gif, pdf, mp3, mp4, wav, doc, docx
+  extension: jpg, jpeg, png, gif, heic, heif, pdf, mp3, mp4, wav, doc, docx
 fields:
   alt:
     label: Alt Text

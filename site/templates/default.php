@@ -25,6 +25,15 @@
                                 <img id="overlayImage" src="" alt="">
                             </div>
                         </div>
+                        
+                        <!-- Text File Overlay -->
+                        <div class="text-overlay" id="textOverlay" onclick="hideTextOverlay()" style="display: none;">
+                            <div class="text-container" onclick="event.stopPropagation()">
+                                <div class="text-content" id="textContent">
+                                    <!-- Text content will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
             <!-- Header -->
                                     <div class="finder-header">
                             <svg class="user-icon" fill="currentColor" viewBox="0 0 20 20">
@@ -308,8 +317,10 @@
                                 window.open(item.url, '_blank');
                             }
                         } else if (item.type === 'textfile') {
-                            // Show text content in modal (could be implemented)
+                            // Show text content in overlay
                             console.log('Text file clicked:', item.name);
+                            // Always try to load content from the textfile.txt
+                            loadTextFileContent(item.path);
                         } else if (item.type === 'image' && item.url) {
                             // Show image in overlay
                             console.log('Image clicked:', item.name, item.url);
@@ -552,6 +563,108 @@
             }
         }
         
+        // Show text file overlay
+        function showTextOverlay(content) {
+            console.log('showTextOverlay called with content');
+            const overlay = document.getElementById('textOverlay');
+            const textContent = document.getElementById('textContent');
+            
+            if (!overlay || !textContent) {
+                console.error('Text overlay or content element not found');
+                return;
+            }
+            
+            // Show loading state
+            textContent.innerHTML = '<div class="loading"><div class="spinner"></div>Loading text content...</div>';
+            overlay.style.display = 'flex';
+            
+            // Trigger fade in
+            setTimeout(() => {
+                overlay.classList.add('active');
+            }, 10);
+            
+            // Load text content directly
+            loadTextContent(content);
+            
+            console.log('Text overlay should be visible now');
+        }
+        
+        // Load text file content from server
+        async function loadTextFileContent(path) {
+            try {
+                const response = await fetch(`/api/textfile-content${path}`);
+                const data = await response.json();
+                
+                if (data.status === 'ok' && data.content) {
+                    showTextOverlay(data.content);
+                } else {
+                    console.error('Failed to load text file content');
+                }
+            } catch (error) {
+                console.error('Failed to load text file content:', error);
+            }
+        }
+
+        // Load text content
+        function loadTextContent(content) {
+            console.log('loadTextContent called with:', content);
+            const textContent = document.getElementById('textContent');
+            if (textContent && content) {
+                // Check if content is an object and extract the text
+                let textContentString = '';
+                if (typeof content === 'object') {
+                    // If it's an object, try to get the content field
+                    console.log('Content object keys:', Object.keys(content));
+                    console.log('Content object:', content);
+                    
+                    // Try to get the content from the Kirby content object
+                    if (content.value !== null && content.value !== undefined) {
+                        textContentString = content.value;
+                    } else if (content.content) {
+                        textContentString = content.content;
+                    } else {
+                        textContentString = JSON.stringify(content);
+                    }
+                } else {
+                    textContentString = content;
+                }
+                
+                console.log('Text content string:', textContentString);
+                
+                // Format the content directly
+                const formattedText = textContentString
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>');
+                
+                if (formattedText && formattedText !== '[object Object]') {
+                    textContent.innerHTML = `<p>${formattedText}</p>`;
+                } else {
+                    textContent.innerHTML = '<div class="error">Content format not supported</div>';
+                }
+            } else {
+                textContent.innerHTML = '<div class="error">No content available</div>';
+            }
+        }
+        
+        // Hide text overlay
+        function hideTextOverlay() {
+            console.log('hideTextOverlay called');
+            const overlay = document.getElementById('textOverlay');
+            if (overlay) {
+                // Start fade out
+                overlay.classList.remove('active');
+                
+                // Hide after fade completes
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+                
+                console.log('Text overlay fading out');
+            } else {
+                console.error('Text overlay element not found');
+            }
+        }
+        
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -563,6 +676,11 @@
                 const imageOverlay = document.getElementById('imageOverlay');
                 if (imageOverlay && imageOverlay.classList.contains('active')) {
                     hideImageOverlay();
+                }
+                
+                const textOverlay = document.getElementById('textOverlay');
+                if (textOverlay && textOverlay.classList.contains('active')) {
+                    hideTextOverlay();
                 }
             }
         });

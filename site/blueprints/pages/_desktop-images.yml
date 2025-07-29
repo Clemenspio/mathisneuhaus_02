@@ -1,0 +1,27 @@
+title: Desktop Images
+icon: 🖼️
+
+options:
+  changeSlug: false
+  changeStatus: false
+  changeTemplate: false
+  delete: false
+
+status:
+  draft: true
+  unlisted: true
+  listed: false
+
+sections:
+  images:
+    type: files
+    headline: Desktop Background Images
+    template: desktop-image
+    info: "{{ file.dimensions }} • {{ file.niceSize }}"
+    layout: cards
+    size: small
+    accept:
+      mime: image/jpeg, image/png, image/webp
+    image:
+      cover: true
+      ratio: 16/9
