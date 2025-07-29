@@ -31,8 +31,9 @@ return [
                                 'item_count' => $child->children()->count() + $child->files()->count()
                             ];
                             
-                            if ($child->hover_background_images()->isNotEmpty() && $child->hover_background_images()->toFile()) {
-                                $item['hover_thumbnail_url'] = $child->hover_background_images()->toFile()->url();
+                            // KORRIGIERT: hover_image statt hover_background_images
+                            if ($child->hover_image()->isNotEmpty() && $child->hover_image()->toFile()) {
+                                $item['hover_thumbnail_url'] = $child->hover_image()->toFile()->url();
                             }
                             
                             $items[] = $item;
@@ -63,16 +64,16 @@ return [
                             continue;
                         }
                         
-                        // NEU: Template-Check für hover-background-image
+                        // Template-Check für hover-background-image
                         if ($file->template() === 'hover-background-image') {
                             continue;
                         }
                         
-                        // Existing check for hover images (als zusätzliche Sicherheit)
+                        // KORRIGIERT: Check mit hover_image
                         $isHoverImage = false;
                         foreach ($site->children() as $child) {
-                            if ($child->intendedTemplate() == 'folder' && $child->hover_background_images()->isNotEmpty()) {
-                                $hoverFile = $child->hover_background_images()->toFile();
+                            if ($child->intendedTemplate() == 'folder' && $child->hover_image()->isNotEmpty()) {
+                                $hoverFile = $child->hover_image()->toFile();
                                 if ($hoverFile && $hoverFile->id() === $file->id()) {
                                     $isHoverImage = true;
                                     break;
@@ -147,8 +148,9 @@ return [
                                 'item_count' => $child->children()->count() + $child->files()->count()
                             ];
                             
-                            if ($child->hover_background_images()->isNotEmpty() && $child->hover_background_images()->toFile()) {
-                                $item['hover_thumbnail_url'] = $child->hover_background_images()->toFile()->url();
+                            // KORRIGIERT: hover_image statt hover_background_images
+                            if ($child->hover_image()->isNotEmpty() && $child->hover_image()->toFile()) {
+                                $item['hover_thumbnail_url'] = $child->hover_image()->toFile()->url();
                             }
                             
                             $items[] = $item;
@@ -179,16 +181,17 @@ return [
                             continue;
                         }
                         
-                        // NEU: Template-Check für hover-background-image
+                        // Template-Check für hover-background-image
                         if ($file->template() === 'hover-background-image') {
                             continue;
                         }
                         
-                        // Check if file is used as hover image in current page
+                        // KORRIGIERT: Check mit hover_image
                         $isHoverImage = false;
                         
-                        if ($currentPage->hover_background_images()->isNotEmpty()) {
-                            $hoverFile = $currentPage->hover_background_images()->toFile();
+                        // Check if file is used as hover image in current page
+                        if ($currentPage->hover_image()->isNotEmpty()) {
+                            $hoverFile = $currentPage->hover_image()->toFile();
                             if ($hoverFile && $hoverFile->id() === $file->id()) {
                                 $isHoverImage = true;
                             }
@@ -197,8 +200,8 @@ return [
                         // Also check children of current page
                         if (!$isHoverImage) {
                             foreach ($currentPage->children() as $child) {
-                                if ($child->intendedTemplate() == 'folder' && $child->hover_background_images()->isNotEmpty()) {
-                                    $hoverFile = $child->hover_background_images()->toFile();
+                                if ($child->intendedTemplate() == 'folder' && $child->hover_image()->isNotEmpty()) {
+                                    $hoverFile = $child->hover_image()->toFile();
                                     if ($hoverFile && $hoverFile->id() === $file->id()) {
                                         $isHoverImage = true;
                                         break;

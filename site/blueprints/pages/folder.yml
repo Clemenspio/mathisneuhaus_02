@@ -38,4 +38,5 @@ columns:
         label: Hover Background Image
         type: files
         multiple: false
+        template: hover-background-image  # WICHTIG: Template zuweisen
         help: This image will show as background when hovering over this folder
