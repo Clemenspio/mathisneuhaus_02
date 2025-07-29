@@ -131,10 +131,10 @@
                     </div>
                 `;
             } else {
-                items.forEach(item => {
-                    const itemElement = createItemElement(item);
-                    itemsList.appendChild(itemElement);
-                });
+                            items.forEach(item => {
+                const itemElement = createItemElement(item);
+                itemsList.appendChild(itemElement);
+            });
             }
             
             // Add class for home column
@@ -182,7 +182,7 @@
                 itemDiv.onmouseleave = () => hideHoverImage();
             }
             
-            const icon = getIcon(item.type);
+            const icon = getIcon(item.type, item);
             
             itemDiv.innerHTML = `
                 <div class="item-content">
@@ -297,7 +297,11 @@
         }
 
         // Get icon for item type
-        function getIcon(type) {
+        function getIcon(type, item) {
+            if (type === 'image' && item.url) {
+                return `<img src="${item.url}" alt="${item.name}" class="image-thumbnail">`;
+            }
+            
             const icons = {
                 folder: '<img src="/assets/icons/Folder.svg" alt="Folder" class="svg-icon">',
                 textfile: '<img src="/assets/icons/Textfile.svg" alt="Textfile" class="svg-icon">',

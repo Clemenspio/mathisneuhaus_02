@@ -64,6 +64,22 @@ return [
                             continue;
                         }
                         
+                        // Skip files that are used as hover images in any folder
+                        $isHoverImage = false;
+                        foreach ($site->children() as $child) {
+                            if ($child->intendedTemplate() == 'folder' && $child->hover_image()->isNotEmpty()) {
+                                $hoverFile = $child->hover_image()->toFile();
+                                if ($hoverFile && $hoverFile->id() === $file->id()) {
+                                    $isHoverImage = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if ($isHoverImage) {
+                            continue;
+                        }
+                        
                         $fileItem = [
                             'name' => $file->filename(),
                             'type' => $file->type(),
@@ -158,6 +174,22 @@ return [
                     foreach ($currentPage->files() as $file) {
                         // Skip files that are in the desktop-images folder
                         if ($file->parent()->slug() === '_desktop-images') {
+                            continue;
+                        }
+                        
+                        // Skip files that are used as hover images in any folder
+                        $isHoverImage = false;
+                        foreach ($currentPage->children() as $child) {
+                            if ($child->intendedTemplate() == 'folder' && $child->hover_image()->isNotEmpty()) {
+                                $hoverFile = $child->hover_image()->toFile();
+                                if ($hoverFile && $hoverFile->id() === $file->id()) {
+                                    $isHoverImage = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if ($isHoverImage) {
                             continue;
                         }
                         
