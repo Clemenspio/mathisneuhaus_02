@@ -49,6 +49,5 @@ tabs:
         layout: cards
         info: "{{ file.dimensions }} - {{ file.niceSize }}"
         accept:
-          extension: jpg, jpeg, png, gif, webp, heic, heif
+          extension: jpg, jpeg, png, gif, webp
         help: Upload background images for the desktop. One will be randomly selected each time the page loads.
-        query: site.find('_desktop-images').files
