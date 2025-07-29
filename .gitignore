@@ -1,51 +1,78 @@
-# System files
-# ------------
+# =============================================================================
+# :: GENERAL ::
+# Ignoriert allgemeine System- und Editor-Dateien.
+# =============================================================================
 
-Icon
+# Systemdateien von macOS und Windows
 .DS_Store
+Thumbs.db
+Icon?
 
-# Temporary files
-# ---------------
+# Log- und temporäre Dateien
+*.log
+*.tmp
+*.temp
 
+# Editor-spezifische Konfigurationsordner und -dateien
+# (verhindert, dass persönliche Editor-Einstellungen geteilt werden)
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+
+# =============================================================================
+# :: KIRBY CORE & VENDOR ::
+# Ignoriert den Kirby-Core und Abhängigkeiten von Drittanbietern.
+# Diese sollten idealerweise über Composer oder als Submodule verwaltet werden.
+# =============================================================================
+
+/kirby/
+/panel/
+/vendor/
+
+
+# =============================================================================
+# :: CONTENT & MEDIA ::
+# Ignoriert Inhalte und von Kirby generierte Medien-Dateien (Thumbnails etc.).
+# Der Content wird typischerweise direkt auf dem Server über das Panel bearbeitet.
+# =============================================================================
+
+# Content-Ordner komplett ignorieren
+/content/
+
+# Medien-Ordner (Thumbnails etc.), leere index.html beibehalten
 /media/*
 !/media/index.html
 
-# Lock files
-# ---------------
 
-.lock
+# =============================================================================
+# :: SECURITY SENSITIVE ::
+# NIEMALS diese Dateien und Ordner in einem öffentlichen Repository teilen!
+# Sie enthalten Benutzerdaten, Passwörter, Lizenzen und Sitzungsinformationen.
+# =============================================================================
 
-# Editors
-# (sensitive workspace files)
-# ---------------------------
-*.sublime-workspace
-/.vscode
-/.idea
-
-# -------------SECURITY-------------
-# NEVER publish these files via Git!
-# -------------SECURITY-------------
-
-# Cache Files
-# ---------------
-
-/site/cache/*
-!/site/cache/index.html
-
-# Accounts
-# ---------------
-
+# Benutzerkonten (essentiell für die Sicherheit!)
 /site/accounts/*
 !/site/accounts/index.html
 
-# Sessions
-# ---------------
-
+# Benutzersitzungen
 /site/sessions/*
 !/site/sessions/index.html
 
-# License
-# ---------------
-
+# Kirby Lizenzdatei
 /site/config/.license
-/site/config/config.starterkit.test.php
+
+# Lokale und server-spezifische Konfigurationsdateien
+# Es ist eine gute Praxis, eine config.php mit unkritischen Standardwerten
+# zu committen und sensible Daten in einer ignorierten, umgebungsspezifischen
+# Datei abzulegen (z.B. config.meine-domain.de.php).
+/site/config/config.*.php
+!/site/config/config.php
+
+# Cache-Dateien
+/site/cache/*
+!/site/cache/index.html
+
+# Lock-Datei für das Panel
+.lock
