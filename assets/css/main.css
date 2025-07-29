@@ -240,8 +240,20 @@
   
   /* Image Overlay */
   .image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.3);
+    display: none;
+    align-items: center;
+    justify-content: center;
     z-index: 1000;
+  }
+  
+  .image-overlay.active {
+    display: flex !important;
   }
   
   .image-container {
@@ -250,18 +262,19 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     background: #FFFFFF;
     border: 3px solid #F2F2F2;
     box-shadow: 0px 0px 34px rgba(0, 0, 0, 0.14);
     border-radius: 2px;
-    max-width: 90vw;
-    max-height: 90vh;
   }
   
   .image-container img {
-    max-width: calc(90vw - 6px);
-    max-height: calc(90vh - 6px);
+    max-width: 90vw;
+    max-height: 90vh;
     width: auto;
     height: auto;
     object-fit: contain;

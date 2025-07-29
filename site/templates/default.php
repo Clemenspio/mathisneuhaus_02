@@ -20,7 +20,7 @@
                         <div class="finder-hover-bg" id="finderHoverBg"></div>
                         
                         <!-- Image Overlay -->
-                        <div class="image-overlay" id="imageOverlay" onclick="hideImageOverlay()">
+                        <div class="image-overlay" id="imageOverlay" onclick="hideImageOverlay()" style="display: none;">
                             <div class="image-container" onclick="event.stopPropagation()">
                                 <img id="overlayImage" src="" alt="">
                             </div>
@@ -246,6 +246,7 @@
                             console.log('Text file clicked:', item.name);
                         } else if (item.type === 'image' && item.url) {
                             // Show image in overlay
+                            console.log('Image clicked:', item.name, item.url);
                             showImageOverlay(item.url);
                         } else if (item.url) {
                             window.open(item.url, '_blank');
@@ -448,41 +449,32 @@
 
         // Show image overlay
         function showImageOverlay(imageUrl) {
+            console.log('showImageOverlay called with:', imageUrl);
             const overlay = document.getElementById('imageOverlay');
             const image = document.getElementById('overlayImage');
-            const container = document.querySelector('.image-container');
+            
+            if (!overlay || !image) {
+                console.error('Overlay or image element not found');
+                return;
+            }
             
             image.src = imageUrl;
-            
-            // Wait for image to load, then adjust container size
-            image.onload = function() {
-                const imgWidth = image.naturalWidth;
-                const imgHeight = image.naturalHeight;
-                
-                // Calculate max available space
-                const maxWidth = window.innerWidth * 0.9 - 6; // 90vw - border only
-                const maxHeight = window.innerHeight * 0.9 - 6; // 90vh - border only
-                
-                // Calculate scale to fit image within bounds
-                const scaleX = maxWidth / imgWidth;
-                const scaleY = maxHeight / imgHeight;
-                const scale = Math.min(scaleX, scaleY, 1); // Don't scale up
-                
-                // Set container size based on scaled image
-                const containerWidth = imgWidth * scale + 6; // image width + border only
-                const containerHeight = imgHeight * scale + 6; // image height + border only
-                
-                container.style.width = containerWidth + 'px';
-                container.style.height = containerHeight + 'px';
-            };
-            
+            overlay.style.display = 'flex';
             overlay.classList.add('active');
+            console.log('Image overlay should be visible now');
         }
         
         // Hide image overlay
         function hideImageOverlay() {
+            console.log('hideImageOverlay called');
             const overlay = document.getElementById('imageOverlay');
-            overlay.classList.remove('active');
+            if (overlay) {
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+                console.log('Image overlay hidden');
+            } else {
+                console.error('Image overlay element not found');
+            }
         }
         
         // Keyboard navigation
