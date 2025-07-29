@@ -1,4 +1,5 @@
 title: Site
+
 tabs:
   content:
     label: Content
@@ -10,6 +11,7 @@ tabs:
         template: folder
         create:
           - folder
+
       textfiles:
         type: pages
         label: Text Files
@@ -17,6 +19,7 @@ tabs:
         template: textfile
         create:
           - textfile
+
       links:
         type: pages
         label: External Links
@@ -24,12 +27,14 @@ tabs:
         template: externallink
         create:
           - externallink
+
       files:
         type: files
         label: Media Files
         layout: cards
         accept:
           extension: jpg, jpeg, png, gif, webp, heic, heif
+
   contact:
     label: Contact
     sections:
@@ -40,6 +45,7 @@ tabs:
         max: 1
         create:
           - about
+
   desktop:
     label: Desktop Images
     sections:
@@ -47,8 +53,9 @@ tabs:
         type: files
         label: Background Images
         layout: cards
-        info: "{{ file.dimensions }} - {{ file.niceSize }}"
+        info: "{{ file.dimensions }} – {{ file.niceSize }}"
         accept:
           extension: jpg, jpeg, png, gif, webp, heic, heif
-        help: Upload background images for the desktop. One will be randomly selected each time the page loads.
-        query: site.find('_desktop-images').files
+        help: >
+          Upload background images for the desktop. One will be randomly selected each time the page loads.
+          parent: site.find('_desktop-images', ['status' => 'hidden'])
