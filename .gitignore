@@ -11,19 +11,13 @@ Icon
 !/media/index.html
 
 # Lock files
-# ----------
+# ---------------
 
 .lock
-
-# Kirby 5 specific
-# ----------------
-
-_changes
 
 # Editors
 # (sensitive workspace files)
 # ---------------------------
-
 *.sublime-workspace
 /.vscode
 /.idea
@@ -33,37 +27,25 @@ _changes
 # -------------SECURITY-------------
 
 # Cache Files
-# -----------
+# ---------------
 
 /site/cache/*
 !/site/cache/index.html
 
 # Accounts
-# --------
+# ---------------
 
 /site/accounts/*
 !/site/accounts/index.html
 
 # Sessions
-# --------
+# ---------------
 
 /site/sessions/*
 !/site/sessions/index.html
 
 # License
-# -------
+# ---------------
 
 /site/config/.license
-/site/config/config.*.php
-
-# Composer (if using Composer)
-# ----------------------------
-
-/vendor
-/kirby
-composer.lock
-
-# Node modules (if using npm/yarn)
-# --------------------------------
-
-node_modules
+/site/config/config.starterkit.test.php
