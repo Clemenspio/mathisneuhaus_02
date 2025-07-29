@@ -1,78 +1,21 @@
-# =============================================================================
-# :: GENERAL ::
-# Ignoriert allgemeine System- und Editor-Dateien.
-# =============================================================================
-
-# Systemdateien von macOS und Windows
-.DS_Store
-Thumbs.db
-Icon?
-
-# Log- und temporäre Dateien
-*.log
-*.tmp
-*.temp
-
-# Editor-spezifische Konfigurationsordner und -dateien
-# (verhindert, dass persönliche Editor-Einstellungen geteilt werden)
-.idea/
-.vscode/
-*.sublime-project
-*.sublime-workspace
-
-
-# =============================================================================
-# :: KIRBY CORE & VENDOR ::
-# Ignoriert den Kirby-Core und Abhängigkeiten von Drittanbietern.
-# Diese sollten idealerweise über Composer oder als Submodule verwaltet werden.
-# =============================================================================
-
-/kirby/
-/panel/
-/vendor/
-
-
-# =============================================================================
-# :: CONTENT & MEDIA ::
-# Ignoriert Inhalte und von Kirby generierte Medien-Dateien (Thumbnails etc.).
-# Der Content wird typischerweise direkt auf dem Server über das Panel bearbeitet.
-# =============================================================================
-
-# Content-Ordner komplett ignorieren
-/content/
-
-# Medien-Ordner (Thumbnails etc.), leere index.html beibehalten
-/media/*
-!/media/index.html
-
-
-# =============================================================================
-# :: SECURITY SENSITIVE ::
-# NIEMALS diese Dateien und Ordner in einem öffentlichen Repository teilen!
-# Sie enthalten Benutzerdaten, Passwörter, Lizenzen und Sitzungsinformationen.
-# =============================================================================
-
-# Benutzerkonten (essentiell für die Sicherheit!)
+# Kirby
 /site/accounts/*
 !/site/accounts/index.html
-
-# Benutzersitzungen
-/site/sessions/*
-!/site/sessions/index.html
-
-# Kirby Lizenzdatei
-/site/config/.license
-
-# Lokale und server-spezifische Konfigurationsdateien
-# Es ist eine gute Praxis, eine config.php mit unkritischen Standardwerten
-# zu committen und sensible Daten in einer ignorierten, umgebungsspezifischen
-# Datei abzulegen (z.B. config.meine-domain.de.php).
-/site/config/config.*.php
-!/site/config/config.php
-
-# Cache-Dateien
 /site/cache/*
 !/site/cache/index.html
+/site/sessions/*
+!/site/sessions/index.html
+/content/*
+!/content/index.html
+/media/*
+!/media/index.html
+/.license
 
-# Lock-Datei für das Panel
-.lock
+# System
+.DS_Store
+Thumbs.db
+
+# Build tools
+node_modules/
+vendor/
+npm-debug.log
