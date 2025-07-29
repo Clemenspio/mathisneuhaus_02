@@ -1,21 +1,36 @@
-# Kirby
-/site/accounts/*
-!/site/accounts/index.html
-/site/cache/*
-!/site/cache/index.html
-/site/sessions/*
-!/site/sessions/index.html
+# Kirby CMS
+# ----------
 /content/*
-!/content/index.html
+!/content/site.txt
+/site/accounts/*
+!/site/accounts/.gitkeep
+/site/cache/*
+!/site/cache/.gitkeep
+/site/sessions/*
+!/site/sessions/.gitkeep
+/site/config/.license
+/site/config/config.*.php
 /media/*
 !/media/index.html
-/.license
+/assets/avatars/*
+!/assets/avatars/.gitkeep
 
-# System
+# System files
 .DS_Store
 Thumbs.db
+*.swp
+.env
 
-# Build tools
-node_modules/
-vendor/
-npm-debug.log
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Dependencies
+/vendor/
+/node_modules/
+/kirby/
+
+# Logs
+*.log
+npm-debug.log*

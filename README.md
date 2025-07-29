@@ -6,14 +6,12 @@ Ein modernes Portfolio-Interface im Stil des macOS Finders, das Mathis Neuhaus' 
 
 ### Frontend
 - **Vue.js 3** - Progressive JavaScript Framework
-- **Nuxt 3** - Vue.js Meta-Framework
 - **CSS3** - Moderne Styling mit Flexbox und Grid
 - **HTML5** - Semantisches Markup
 
 ### Backend
 - **Kirby CMS 5** - File-basiertes Content Management System
 - **PHP 8+** - Server-side Logic
-- **MySQL/SQLite** - Datenbank (optional)
 
 ### APIs
 - **REST API** - Kirby's eingebaute API
@@ -23,15 +21,16 @@ Ein modernes Portfolio-Interface im Stil des macOS Finders, das Mathis Neuhaus' 
 
 ```
 mathisneuhaus_02/
-├── app.vue                          # Haupt-Vue.js App
 ├── components/                      # Vue.js Komponenten
 │   ├── FinderInterface.vue         # Finder Interface Container
 │   ├── FinderColumn.vue            # Einzelne Spalte
 │   ├── FinderItem.vue              # Einzelnes Item (Ordner/Datei)
-│   ├── ContactOverlay.vue          # About/Contact Overlay
-│   └── ContentModal.vue            # Modal für Datei-Inhalte
+│   └── ContactOverlay.vue          # About/Contact Overlay
 ├── assets/                         # Statische Assets
 │   ├── css/                        # Stylesheets
+│   │   └── main.css               # Haupt-Stylesheet
+│   ├── fonts/                      # Custom Fonts
+│   │   └── KarlST-Regular.otf     # Karl Font
 │   └── icons/                      # SVG Icons
 │       ├── Folder.svg              # Ordner-Icon
 │       └── Textfile.svg            # Textdatei-Icon
@@ -52,13 +51,18 @@ mathisneuhaus_02/
 │   │   │   ├── folder.yml         # Ordner-Blueprint
 │   │   │   ├── textfile.yml       # Textdatei-Blueprint
 │   │   │   ├── externallink.yml   # Link-Blueprint
-│   │   │   └── contact.yml        # Contact-Blueprint
+│   │   │   └── about.yml          # About-Blueprint
 │   │   └── site.yml               # Haupt-Blueprint
 │   ├── config/                    # Kirby Konfiguration
 │   │   └── config.php             # API-Routen & Einstellungen
 │   ├── templates/                 # PHP Templates
 │   │   ├── default.php            # Haupt-Template
-│   │   └── default_old.php        # Backup-Template
+│   │   ├── about.php              # About Template
+│   │   ├── finder.php             # Finder Template
+│   │   ├── document.php           # Dokument Template
+│   │   ├── image.php              # Bild Template
+│   │   ├── link.php               # Link Template
+│   │   └── project.php            # Projekt Template
 │   └── snippets/                  # PHP Snippets
 └── pages/                         # Kirby Pages
 ```
@@ -165,7 +169,7 @@ Liefert About/Contact Informationen.
 
 ## 🔄 Datei-Abhängigkeiten
 
-### **Vue.js App (app.vue)**
+### **Vue.js App**
 - **Abhängigkeiten**: `components/FinderItem.vue`, `components/FinderColumn.vue`
 - **API**: `site/config/config.php`
 - **Assets**: `assets/icons/`
@@ -179,7 +183,7 @@ Liefert About/Contact Informationen.
 1. **Content** → `content/` Ordner
 2. **Kirby** → Verarbeitet Content via Blueprints
 3. **API** → `site/config/config.php` liefert JSON
-4. **Vue.js** → `app.vue` rendert Interface
+4. **Vue.js** → Components rendern Interface
 5. **Components** → `components/` für UI-Elemente
 
 ## 🛠️ Entwicklung
@@ -188,9 +192,6 @@ Liefert About/Contact Informationen.
 ```bash
 # Kirby Setup
 composer install
-
-# Vue.js Development
-npm run dev
 
 # API Testing
 curl http://localhost/api/content
@@ -202,7 +203,8 @@ curl http://localhost/api/content
 - **Templates**: Anpassen der PHP-Rendering
 
 ### **Styling**
-- **CSS**: Direkt in Vue-Komponenten
+- **CSS**: `assets/css/main.css`
+- **Fonts**: Custom Karl Font
 - **Icons**: CSS-basiert oder SVG
 - **Responsive**: Mobile-first Design
 
@@ -216,6 +218,7 @@ curl http://localhost/api/content
 - [x] Responsive Design
 - [x] API-basierte Content-Verwaltung
 - [x] Kirby CMS Integration
+- [x] Custom Karl Font Integration
 
 ### **🔄 Geplant**
 - [ ] Datei-Vorschau Modal
@@ -232,13 +235,13 @@ curl http://localhost/api/content
 3. API-Route in `site/config/config.php` erweitern
 
 ### **Styling ändern**
-1. CSS in entsprechenden Vue-Komponenten bearbeiten
+1. CSS in `assets/css/main.css` bearbeiten
 2. Icons in `assets/icons/` aktualisieren
 3. Responsive Design testen
 
 ### **API erweitern**
 1. Neue Route in `site/config/config.php` hinzufügen
-2. Vue.js App entsprechend anpassen
+2. Vue.js Components entsprechend anpassen
 3. Error Handling implementieren
 
 ---
