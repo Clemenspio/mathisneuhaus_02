@@ -70,13 +70,18 @@
         async function loadBackgroundImage() {
             try {
                 const response = await fetch('/api/desktop-images');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 
                 if (data.status === 'ok' && data.images && data.images.length > 0) {
                     // Select random image
                     const randomImage = data.images[Math.floor(Math.random() * data.images.length)];
                     const backgroundImage = document.getElementById('backgroundImage');
-                    backgroundImage.style.backgroundImage = `url('${randomImage.url}')`;
+                    if (backgroundImage && randomImage.url) {
+                        backgroundImage.style.backgroundImage = `url('${randomImage.url}')`;
+                    }
                 }
             } catch (error) {
                 console.error('Failed to load background image:', error);
@@ -88,6 +93,9 @@
             console.log('Loading root content...');
             try {
                 const response = await fetch('/api/content');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 console.log('API response:', data);
                 
@@ -314,7 +322,17 @@
                 lastClickedItem = item;
                                     } else if (item.type === 'externallink') {
                             if (item.url) {
-                                window.open(item.url, '_blank');
+                                // Sicherheitscheck für externe URLs
+                                try {
+                                    const url = new URL(item.url);
+                                    if (url.protocol === 'http:' || url.protocol === 'https:') {
+                                        window.open(item.url, '_blank', 'noopener,noreferrer');
+                                    } else {
+                                        console.error('Invalid URL protocol:', item.url);
+                                    }
+                                } catch (error) {
+                                    console.error('Invalid URL:', item.url);
+                                }
                             }
                         } else if (item.type === 'textfile') {
                             // Show text content in overlay

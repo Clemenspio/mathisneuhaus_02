@@ -1,22 +1,30 @@
 <?php
 
 return [
-    'debug' => false, // ⚠️ WICHTIG: auf false setzen!
+    'debug' => false,
     
     'api' => [
         'basicAuth' => false,
-        'allowInsecure' => false, // ⚠️ auf false setzen!
+        'allowInsecure' => false,
         'routes' => [
             [
                 'pattern' => 'content',
                 'method' => 'GET',
                 'auth' => false,
                 'action' => function () {
-                    $site = site();
-                    $items = [];
-                    
-                    // Get all folders - BLEIBT GLEICH
-                    foreach ($site->children() as $child) {
+                    try {
+                        $site = site();
+                        if (!$site) {
+                            return [
+                                'status' => 'error',
+                                'message' => 'Site not found'
+                            ];
+                        }
+                        
+                        $items = [];
+                        
+                        // Get all folders
+                        foreach ($site->children() as $child) {
                         // NEU: Versteckte Ordner (mit _) überspringen
                         if (str_starts_with($child->slug(), '_')) {
                             continue;
@@ -109,6 +117,12 @@ return [
                         'path' => '/',
                         'items' => $items
                     ];
+                    } catch (Exception $e) {
+                        return [
+                            'status' => 'error',
+                            'message' => 'Internal server error'
+                        ];
+                    }
                 }
             ],
             
@@ -320,11 +334,16 @@ return [
                                 if (is_file($filePath)) {
                                     $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
                                     if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                                        $images[] = [
-                                            'url' => '/content/_desktop-images/' . urlencode($file),
-                                            'filename' => $file,
-                                            'size' => filesize($filePath)
-                                        ];
+                                        // Sicherheitscheck: Nur Dateien im erlaubten Verzeichnis
+                                        $realPath = realpath($filePath);
+                                        $allowedPath = realpath($desktopPath);
+                                        if ($realPath && strpos($realPath, $allowedPath) === 0) {
+                                            $images[] = [
+                                                'url' => '/content/_desktop-images/' . urlencode($file),
+                                                'filename' => $file,
+                                                'size' => filesize($filePath)
+                                            ];
+                                        }
                                     }
                                 }
                             }
@@ -359,9 +378,11 @@ return [
                     
                     if (file_exists($contentFile)) {
                         $content = file_get_contents($contentFile);
-                        // Extract the content after "content:" line
-                        if (preg_match('/content:\s*\n(.*?)(?=\n----|\nUuid:|$)/s', $content, $matches)) {
-                            $content = trim($matches[1]);
+                        if ($content !== false) {
+                            // Extract the content after "content:" line
+                            if (preg_match('/content:\s*\n(.*?)(?=\n----|\nUuid:|$)/s', $content, $matches)) {
+                                $content = trim($matches[1]);
+                            }
                         }
                     }
                     
@@ -382,6 +403,14 @@ return [
                 '900w' => ['width' => 900, 'quality' => 80],
                 '1200w' => ['width' => 1200, 'quality' => 80]
             ]
+        ]
+    ],
+    
+    // HEIC-Dateityp registrieren
+    'fileTypes' => [
+        'heic' => [
+            'mime' => 'image/heic',
+            'extensions' => ['heic', 'heif']
         ]
     ]
 ];

@@ -20,6 +20,8 @@
 Thumbs.db
 *.swp
 .env
+.env.local
+.env.production
 
 # IDE
 .idea/
@@ -34,3 +36,16 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+error_log
+access_log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# OS generated files
+.DS_Store?
+ehthumbs.db
+Icon?
