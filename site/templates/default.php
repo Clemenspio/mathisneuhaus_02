@@ -50,6 +50,7 @@
         let columns = [];
         let contactData = null;
         let currentColumnIndex = 0;
+        let lastClickedItem = null;
 
                             // Initialize the finder immediately
                     console.log('Initializing finder...');
@@ -168,6 +169,68 @@
                     col.classList.remove('active');
                 }
             });
+            
+            // Update selected items in parent columns
+            updateSelectedItemsInParentColumns();
+        }
+
+        // Mark the clicked item as selected immediately
+        function markClickedItemAsSelected(item) {
+            // Update the selected items to include the clicked item
+            updateSelectedItemsInParentColumns();
+        }
+
+        // Update selected items in parent columns to show current path
+        function updateSelectedItemsInParentColumns() {
+            const allColumns = document.querySelectorAll('.finder-column');
+            
+            // Clear all selected states first
+            document.querySelectorAll('.finder-item.selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Mark items as selected based on current path
+            for (let i = 0; i <= currentColumnIndex; i++) {
+                const column = allColumns[i];
+                if (column && i < columns.length) {
+                    const columnData = columns[i];
+                    const items = column.querySelectorAll('.finder-item');
+                    
+                    // Find the item that corresponds to the next column in the path
+                    if (i < currentColumnIndex && i + 1 < columns.length) {
+                        const nextColumnTitle = columns[i + 1].title;
+                        items.forEach(item => {
+                            const itemName = item.querySelector('.item-name').textContent;
+                            if (itemName === nextColumnTitle) {
+                                item.classList.add('selected');
+                            }
+                        });
+                    }
+                    
+                    // Also mark the current column's title in this column if it exists
+                    if (i < currentColumnIndex) {
+                        const currentColumnTitle = columns[currentColumnIndex].title;
+                        items.forEach(item => {
+                            const itemName = item.querySelector('.item-name').textContent;
+                            if (itemName === currentColumnTitle) {
+                                item.classList.add('selected');
+                            }
+                        });
+                    }
+                    
+                    // Mark the current column's selected item
+                    if (i === currentColumnIndex) {
+                        // Mark the item that corresponds to the current column title
+                        const currentColumnTitle = columns[i].title;
+                        items.forEach(item => {
+                            const itemName = item.querySelector('.item-name').textContent;
+                            if (itemName === currentColumnTitle) {
+                                item.classList.add('selected');
+                            }
+                        });
+                    }
+                }
+            }
         }
 
         // Create item element
@@ -199,12 +262,15 @@
         // Handle item clicks
         async function handleItemClick(item) {
             console.log('Item clicked:', item);
+            
             if (item.type === 'folder') {
                 // Check if this folder is already open in any column
                 const existingColumn = columns.find(col => col.title === item.name);
                 if (existingColumn) {
                     // Folder is already open, just navigate to it
                     const columnIndex = columns.indexOf(existingColumn);
+                    // Set lastClickedItem first
+                    lastClickedItem = item;
                     navigateToColumn(columnIndex);
                     return;
                 }
@@ -234,6 +300,9 @@
                     console.error('Failed to load folder:', error);
                     addColumn(item.name, [], item.hover_thumbnail_url);
                 }
+                
+                // Set lastClickedItem for new folders
+                lastClickedItem = item;
                                     } else if (item.type === 'externallink') {
                             if (item.url) {
                                 window.open(item.url, '_blank');
@@ -262,6 +331,9 @@
             // Reset columns array to only contain Home
             columns = columns.slice(0, 1);
             currentColumnIndex = 0;
+            
+            // Update active column and selected items
+            updateActiveColumn();
         }
 
         // Remove all columns after current
@@ -275,6 +347,9 @@
             
             // Update columns array
             columns = columns.slice(0, currentColumnIndex + 1);
+            
+            // Update active column and selected items
+            updateActiveColumn();
         }
 
         // Navigate back to a specific column
@@ -282,7 +357,7 @@
             if (index >= 0 && index < columns.length) {
                 currentColumnIndex = index;
                 
-                // Update active column
+                // Update active column and selected items
                 updateActiveColumn();
                 
                 // Scroll to show the target column

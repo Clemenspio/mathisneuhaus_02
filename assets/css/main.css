@@ -149,6 +149,12 @@
     color: white;
   }
   
+  /* Ensure selected state overrides hover state */
+  .finder-item.selected:hover {
+    background-color: #000000;
+    color: white;
+  }
+  
 
   
   .item-content {
