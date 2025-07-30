@@ -1,5 +1,26 @@
 <?php
 
+// Funktion zum rekursiven Suchen von Hover-Bildern in Unterordnern
+function findInheritedHoverImage($page) {
+    $availableImages = [];
+    foreach ($page->children() as $child) {
+        if ($child->intendedTemplate() == 'folder') {
+            if ($child->hover_image()->isNotEmpty() && $child->hover_image()->toFile()) {
+                $availableImages[] = $child->hover_image()->toFile();
+            }
+            // Rekursiv in Unterordner suchen
+            $subImages = findInheritedHoverImage($child);
+            if (is_array($subImages)) {
+                $availableImages = array_merge($availableImages, $subImages);
+            }
+        }
+    }
+    if (!empty($availableImages)) {
+        return $availableImages[array_rand($availableImages)];
+    }
+    return [];
+}
+
 return [
     'debug' => false,
     
@@ -34,6 +55,11 @@ return [
                             // KORRIGIERT: hover_image statt hover_background_images
                             if ($child->hover_image()->isNotEmpty() && $child->hover_image()->toFile()) {
                                 $item['hover_thumbnail_url'] = $child->hover_image()->toFile()->url();
+                            } elseif ($child->content()->has('inherit_hover_image') && $child->inherit_hover_image()->bool()) {
+                                $inheritedImage = findInheritedHoverImage($child);
+                                if ($inheritedImage) {
+                                    $item['hover_thumbnail_url'] = $inheritedImage->url();
+                                }
                             }
                             
                             $items[] = $item;
@@ -151,6 +177,11 @@ return [
                             // KORRIGIERT: hover_image statt hover_background_images
                             if ($child->hover_image()->isNotEmpty() && $child->hover_image()->toFile()) {
                                 $item['hover_thumbnail_url'] = $child->hover_image()->toFile()->url();
+                            } elseif ($child->content()->has('inherit_hover_image') && $child->inherit_hover_image()->bool()) {
+                                $inheritedImage = findInheritedHoverImage($child);
+                                if ($inheritedImage) {
+                                    $item['hover_thumbnail_url'] = $inheritedImage->url();
+                                }
                             }
                             
                             $items[] = $item;

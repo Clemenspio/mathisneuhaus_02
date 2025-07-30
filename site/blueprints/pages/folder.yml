@@ -42,3 +42,9 @@ columns:
         multiple: false
         template: hover-background-image  # WICHTIG: Template zuweisen
         help: This image will show as background when hovering over this folder
+      inherit_hover_image:
+        label: Inherit Background Image from Subfolders
+        type: toggle
+        text: If no background image is set, randomly select one from subfolders
+        default: false
+        help: When enabled, if this folder has no background image, it will randomly select one from any subfolder that has a background image set
