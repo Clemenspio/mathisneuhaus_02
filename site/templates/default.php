@@ -13,9 +13,9 @@
                                     <!-- Background Image -->
                 <div class="background-image" id="backgroundImage"></div>
             
-                <!-- Finder Interface -->
-                <div class="finder-interface">
-                    <div class="finder-container">
+                                        <!-- Finder Interface -->
+                        <div class="finder-interface" onclick="handleFinderClick(event)">
+                            <div class="finder-container">
                         <!-- Hover Background within Container -->
                         <div class="finder-hover-bg" id="finderHoverBg"></div>
                         
@@ -59,12 +59,23 @@
         let columns = [];
         let contactData = null;
         let currentColumnIndex = 0;
+<<<<<<< Updated upstream
         let lastClickedItem = null;
+=======
+        let isAboutMode = false;
+>>>>>>> Stashed changes
 
                             // Initialize the finder immediately
                     console.log('Initializing finder...');
                     loadBackgroundImage();
                     loadRootContent();
+                    
+                    // Add keyboard handler for about mode
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape' && isAboutMode) {
+                            hideAboutPage();
+                        }
+                    });
 
         // Load random background image
         async function loadBackgroundImage() {
@@ -88,6 +99,81 @@
             }
         }
 
+        // Show about page with animation
+        async function showAboutPage() {
+            if (isAboutMode) return;
+            
+            isAboutMode = true;
+            const finderInterface = document.querySelector('.finder-interface');
+            const backgroundImage = document.getElementById('backgroundImage');
+            
+            // Load about content
+            try {
+                const response = await fetch('/api/about');
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    // Create about overlay
+                    const aboutOverlay = document.createElement('div');
+                    aboutOverlay.className = 'about-overlay';
+                    aboutOverlay.innerHTML = `
+                        <div class="about-content">
+                            <h1>${data.title}</h1>
+                            <div class="about-text">${data.content}</div>
+                        </div>
+                    `;
+                    document.body.appendChild(aboutOverlay);
+                    
+                    // Animate finder down and fade
+                    finderInterface.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    finderInterface.style.transform = 'translateY(90vh)';
+                    finderInterface.style.opacity = '0.3';
+                    
+                    // Show about content
+                    setTimeout(() => {
+                        aboutOverlay.style.opacity = '1';
+                        aboutOverlay.style.transform = 'translateY(0)';
+                    }, 400);
+                }
+            } catch (error) {
+                console.error('Failed to load about content:', error);
+            }
+        }
+        
+        // Handle finder click to return from about mode
+        function handleFinderClick(event) {
+            if (isAboutMode) {
+                event.preventDefault();
+                hideAboutPage();
+            }
+        }
+        
+        // Hide about page and restore finder
+        function hideAboutPage() {
+            if (!isAboutMode) return;
+            
+            isAboutMode = false;
+            const finderInterface = document.querySelector('.finder-interface');
+            const aboutOverlay = document.querySelector('.about-overlay');
+            
+            // Hide about content
+            if (aboutOverlay) {
+                aboutOverlay.style.opacity = '0';
+                aboutOverlay.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    aboutOverlay.remove();
+                }, 300);
+            }
+            
+            // Restore finder
+            finderInterface.style.transform = 'translateY(0)';
+            finderInterface.style.opacity = '1';
+            
+            setTimeout(() => {
+                finderInterface.style.transition = '';
+            }, 800);
+        }
+        
         // Load root content
         async function loadRootContent() {
             console.log('Loading root content...');
