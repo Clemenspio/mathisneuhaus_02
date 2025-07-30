@@ -1,8 +1,10 @@
 title: Folder
 icon: 📁
 status:
-  draft: true
+  draft: false
   listed: true
+create:
+  status: listed
 columns:
   - width: 2/3
     sections:

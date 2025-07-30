@@ -1,5 +1,10 @@
 title: External Link
 icon: 🔗
+status:
+  draft: false
+  listed: true
+create:
+  status: listed
 fields:
   link_url:
     label: URL

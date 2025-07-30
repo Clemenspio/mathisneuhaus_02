@@ -474,10 +474,11 @@
     z-index: 4;
     pointer-events: none;
     border-radius: 12px;
+    mix-blend-mode: multiply;
   }
   
   .finder-hover-bg.active {
-    opacity: 0.5;
+    opacity: 0.9;
   }
   
   /* ==========================================================================

@@ -1,5 +1,10 @@
 title: Text File
 icon: 📄
+status:
+  draft: false
+  listed: true
+create:
+  status: listed
 fields:
   content:
     label: Content
