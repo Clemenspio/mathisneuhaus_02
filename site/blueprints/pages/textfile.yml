@@ -16,4 +16,7 @@ fields:
       - link
       - ul
       - ol
-    help: Write your text content here. It will appear as a text file in the finder.
+      - h1
+      - h2
+      - h3
+    help: Write your text content here. Use H1, H2, H3 for titles. It will appear as a text file in the finder.

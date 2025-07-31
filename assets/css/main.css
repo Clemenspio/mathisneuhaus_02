@@ -323,8 +323,9 @@
     flex-direction: column;
     position: relative;
     width: 90vw;
-    max-width: 800px;
-    height: 80vh; /* 80% der Bildschirmhöhe */
+    max-width: 600px; /* A4 Breite begrenzen */
+    height: calc(90vw * 1.414); /* A4 Verhältnis (1:1.414) */
+    max-height: 90vh; /* Maximal 90% der Bildschirmhöhe */
     background: #FFFFFF;
     border: 3px solid #F2F2F2;
     box-shadow: 0px 0px 34px rgba(0, 0, 0, 0.14);
@@ -332,26 +333,7 @@
     overflow: hidden;
   }
   
-  /* Header für das Text-Overlay */
-  .text-header {
-    padding: 20px 30px;
-    border-bottom: 1px solid #E5E5E5;
-    background: #FAFAFA;
-    flex-shrink: 0;
-  }
-  
-  .text-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-  }
-  
-  .text-meta {
-    font-size: 14px;
-    color: #666;
-    margin-top: 4px;
-  }
+
   
   /* Scrollbarer Text-Inhalt */
   .text-content {
@@ -363,6 +345,41 @@
     color: #333;
     overflow-y: auto;
     background: #FFFFFF;
+  }
+  
+  /* Text content formatting */
+  .text-content h1 {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 32px;
+    margin: 0 0 20px 0;
+    color: #000000;
+  }
+  
+  .text-content h2 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 28px;
+    margin: 20px 0 15px 0;
+    color: #000000;
+  }
+  
+  .text-content h3 {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 24px;
+    margin: 15px 0 10px 0;
+    color: #000000;
+  }
+  
+  .text-content p {
+    font-size: 20px;
+    line-height: 23px;
+    margin: 0 0 15px 0;
+  }
+  
+  .text-content p:last-child {
+    margin-bottom: 0;
   }
   
   /* Schöner Scrollbar */

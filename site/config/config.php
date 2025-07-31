@@ -382,80 +382,63 @@ return [
                 'method' => 'GET',
                 'auth' => false,
                 'action' => function ($path) {
-                    try {
-                        $path = ltrim($path, '/');
-                        $textfile = page($path);
-                        
-                        // DEBUG: Ausführliche Informationen
-                        if (!$textfile) {
-                            return [
-                                'status' => 'error',
-                                'message' => 'Textfile not found: ' . $path,
-                                'debug' => [
-                                    'path' => $path,
-                                    'all_pages' => array_map(function($p) { return $p->id(); }, site()->index()->toArray())
-                                ]
-                            ];
-                        }
-                        
-                        // DEBUG: Template-Info
-                        if ($textfile->intendedTemplate() !== 'textfile') {
-                            return [
-                                'status' => 'error',
-                                'message' => 'Page is not a textfile',
-                                'debug' => [
-                                    'path' => $path,
-                                    'template' => $textfile->intendedTemplate(),
-                                    'title' => $textfile->title()->value(),
-                                    'exists' => $textfile->exists()
-                                ]
-                            ];
-                        }
-                        
-                        // DEBUG: Content-Info
-                        $content = $textfile->content();
-                        $contentValue = '';
-                        
-                        // Verschiedene Wege versuchen, um Content zu bekommen
-                        if (method_exists($content, 'value')) {
-                            $contentValue = $content->value();
-                        }
-                        
-                        // Fallback: Direkt aus Datei lesen
-                        $fileContent = '';
-                        $contentFile = $textfile->root() . '/textfile.txt';
-                        if (file_exists($contentFile)) {
-                            $fileContent = file_get_contents($contentFile);
-                        }
-                        
-                        return [
-                            'status' => 'ok',
-                            'content' => $contentValue,
-                            'title' => $textfile->title()->value(),
-                            'debug' => [
-                                'path' => $path,
-                                'template' => $textfile->intendedTemplate(),
-                                'content_method_exists' => method_exists($content, 'value'),
-                                'content_length' => strlen($contentValue),
-                                'file_exists' => file_exists($contentFile),
-                                'file_size' => file_exists($contentFile) ? filesize($contentFile) : 0,
-                                'file_content_preview' => substr($fileContent, 0, 200) . '...',
-                                'content_fields' => array_keys($textfile->content()->toArray())
-                            ]
-                        ];
-                        
-                    } catch (Exception $e) {
+                    $textfile = page($path);
+                    
+                    if (!$textfile) {
                         return [
                             'status' => 'error',
-                            'message' => 'Server error: ' . $e->getMessage(),
-                            'debug' => [
-                                'path' => $path ?? 'unknown',
-                                'error' => $e->getMessage(),
-                                'line' => $e->getLine(),
-                                'file' => basename($e->getFile())
-                            ]
+                            'message' => 'Textfile not found'
                         ];
                     }
+                    
+                    // Debug: Log the available fields
+                    error_log('Textfile fields: ' . implode(', ', array_keys($textfile->content()->toArray())));
+                    
+                    // Get content from the content field
+                    $content = $textfile->content()->get('content')->value();
+                    
+                    // If that doesn't work, try the direct content
+                    if (empty($content)) {
+                        $content = $textfile->content()->value();
+                    }
+                    
+                    return [
+                        'status' => 'ok',
+                        'content' => $content,
+                        'title' => $textfile->title()->value(),
+                        'debug' => [
+                            'template' => $textfile->intendedTemplate(),
+                            'has_content' => $textfile->content()->isNotEmpty(),
+                            'content_fields' => array_keys($textfile->content()->toArray())
+                        ]
+                    ];
+                }
+            ],
+            
+            [
+                'pattern' => 'debug-textfile/(:all)',
+                'method' => 'GET',
+                'auth' => false,
+                'action' => function ($path) {
+                    $textfile = page($path);
+                    
+                    if (!$textfile) {
+                        return [
+                            'status' => 'error',
+                            'message' => 'Textfile not found'
+                        ];
+                    }
+                    
+                    return [
+                        'status' => 'ok',
+                        'title' => $textfile->title()->value(),
+                        'template' => $textfile->intendedTemplate(),
+                        'has_content' => $textfile->content()->isNotEmpty(),
+                        'content_fields' => array_keys($textfile->content()->toArray()),
+                        'all_content' => $textfile->content()->toArray(),
+                        'content_value' => $textfile->content()->value(),
+                        'content_kt' => $textfile->content()->kt()->value()
+                    ];
                 }
             ]
         ]

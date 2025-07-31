@@ -29,12 +29,8 @@
                         <!-- Text File Overlay - NEU HINZUGEFÜGT -->
                         <div class="text-overlay" id="textOverlay" onclick="hideTextOverlay()" style="display: none;">
                             <div class="text-container" onclick="event.stopPropagation()">
-                                <!-- Header mit Titel und Close Button -->
-                                <div class="text-header">
-                                    <h2 class="text-title" id="textTitle">Dokument wird geladen...</h2>
-                                    <div class="text-meta" id="textMeta"></div>
-                                    <button class="text-close-btn" onclick="hideTextOverlay()" title="Schließen">&times;</button>
-                                </div>
+                                <!-- Close Button -->
+                                <button class="text-close-btn" onclick="hideTextOverlay()" title="Schließen">&times;</button>
                                 
                                 <!-- Scrollbarer Inhalt -->
                                 <div class="text-content" id="textContent">
@@ -501,18 +497,12 @@
         function showTextOverlay(title, content, path = '') {
             console.log('showTextOverlay called:', title);
             const overlay = document.getElementById('textOverlay');
-            const titleElement = document.getElementById('textTitle');
-            const metaElement = document.getElementById('textMeta');
             const textContent = document.getElementById('textContent');
             
-            if (!overlay || !titleElement || !textContent) {
+            if (!overlay || !textContent) {
                 console.error('Text overlay elements not found');
                 return;
             }
-            
-            // Set title and meta info
-            titleElement.textContent = title;
-            metaElement.textContent = path ? `Pfad: ${path}` : '';
             
             // Show loading state
             textContent.innerHTML = `
@@ -567,17 +557,45 @@
             
             console.log('Processing text content:', textContentString);
             
-            // Format text content
-            if (textContentString && textContentString.trim() !== '') {
-                // Convert line breaks and paragraphs
-                const formattedText = textContentString
-                    .replace(/\r\n/g, '\n')
-                    .replace(/\r/g, '\n')
-                    .replace(/\n\n+/g, '</p><p>')
-                    .replace(/\n/g, '<br>');
-                
-                textContent.innerHTML = `<p>${formattedText}</p>`;
+                    // Format text content with better paragraph and heading handling
+        if (textContentString && textContentString.trim() !== '') {
+            // Split into paragraphs and format
+            const paragraphs = textContentString
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n')
+                .split(/\n\n+/)
+                .filter(p => p.trim() !== '');
+            
+            if (paragraphs.length > 0) {
+                const formattedText = paragraphs
+                    .map((p, index) => {
+                        const trimmedP = p.trim();
+                        
+                        // First paragraph becomes H1 title
+                        if (index === 0) {
+                            return `<h1>${trimmedP.replace(/\n/g, '<br>')}</h1>`;
+                        }
+                        
+                        // Check if paragraph starts with # for other headings
+                        if (trimmedP.startsWith('# ')) {
+                            return `<h1>${trimmedP.substring(2).replace(/\n/g, '<br>')}</h1>`;
+                        } else if (trimmedP.startsWith('## ')) {
+                            return `<h2>${trimmedP.substring(3).replace(/\n/g, '<br>')}</h2>`;
+                        } else if (trimmedP.startsWith('### ')) {
+                            return `<h3>${trimmedP.substring(4).replace(/\n/g, '<br>')}</h3>`;
+                        } else {
+                            return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+                        }
+                    })
+                    .join('');
+                textContent.innerHTML = formattedText;
             } else {
+                // Single paragraph becomes H1
+                const formattedText = textContentString
+                    .replace(/\n/g, '<br>');
+                textContent.innerHTML = `<h1>${formattedText}</h1>`;
+            }
+        } else {
                 textContent.innerHTML = '<div class="text-error">Kein Inhalt verfügbar oder Inhalt konnte nicht geladen werden.</div>';
             }
         }
