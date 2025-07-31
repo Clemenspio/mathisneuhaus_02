@@ -25,6 +25,27 @@
                                 <img id="overlayImage" src="" alt="">
                             </div>
                         </div>
+
+                        <!-- Text File Overlay - NEU HINZUGEFÜGT -->
+                        <div class="text-overlay" id="textOverlay" onclick="hideTextOverlay()" style="display: none;">
+                            <div class="text-container" onclick="event.stopPropagation()">
+                                <!-- Header mit Titel und Close Button -->
+                                <div class="text-header">
+                                    <h2 class="text-title" id="textTitle">Dokument wird geladen...</h2>
+                                    <div class="text-meta" id="textMeta"></div>
+                                    <button class="text-close-btn" onclick="hideTextOverlay()" title="Schließen">&times;</button>
+                                </div>
+                                
+                                <!-- Scrollbarer Inhalt -->
+                                <div class="text-content" id="textContent">
+                                    <div class="text-loading">
+                                        <div class="text-spinner"></div>
+                                        Text wird geladen...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
             <!-- Header -->
                                     <div class="finder-header">
                             <svg class="user-icon" fill="currentColor" viewBox="0 0 20 20">
@@ -234,20 +255,21 @@
                     console.error('Failed to load folder:', error);
                     addColumn(item.name, [], item.hover_thumbnail_url);
                 }
-                                    } else if (item.type === 'externallink') {
-                            if (item.url) {
-                                window.open(item.url, '_blank');
-                            }
-                        } else if (item.type === 'textfile') {
-                            // Show text content in modal (could be implemented)
-                            console.log('Text file clicked:', item.name);
-                        } else if (item.type === 'image' && item.url) {
-                            // Show image in overlay
-                            console.log('Image clicked:', item.name, item.url);
-                            showImageOverlay(item.url);
-                        } else if (item.url) {
-                            window.open(item.url, '_blank');
-                        }
+            } else if (item.type === 'externallink') {
+                if (item.url) {
+                    window.open(item.url, '_blank');
+                }
+            } else if (item.type === 'textfile') {
+                // Show text content in overlay - GEÄNDERT
+                console.log('Text file clicked:', item.name, 'Path:', item.path);
+                loadTextFileContent(item.path, item.name);
+            } else if (item.type === 'image' && item.url) {
+                // Show image in overlay
+                console.log('Image clicked:', item.name, item.url);
+                showImageOverlay(item.url);
+            } else if (item.url) {
+                window.open(item.url, '_blank');
+            }
         }
 
         // Clear all columns except Home
@@ -313,10 +335,6 @@
             };
             return icons[type] || '<img src="/assets/icons/Textfile.svg" alt="File" class="svg-icon">';
         }
-
-
-
-
 
         // Show about overlay
         function showAboutPage() {
@@ -476,21 +494,164 @@
                 console.error('Image overlay element not found');
             }
         }
+
+        // Text-Overlay Funktionen - NEU HINZUGEFÜGT
         
-        // Keyboard navigation
+        // Show text file overlay with better UX
+        function showTextOverlay(title, content, path = '') {
+            console.log('showTextOverlay called:', title);
+            const overlay = document.getElementById('textOverlay');
+            const titleElement = document.getElementById('textTitle');
+            const metaElement = document.getElementById('textMeta');
+            const textContent = document.getElementById('textContent');
+            
+            if (!overlay || !titleElement || !textContent) {
+                console.error('Text overlay elements not found');
+                return;
+            }
+            
+            // Set title and meta info
+            titleElement.textContent = title;
+            metaElement.textContent = path ? `Pfad: ${path}` : '';
+            
+            // Show loading state
+            textContent.innerHTML = `
+                <div class="text-loading">
+                    <div class="text-spinner"></div>
+                    Dokument wird geladen...
+                </div>
+            `;
+            
+            // Show overlay
+            overlay.style.display = 'flex';
+            
+            // Trigger fade in
+            setTimeout(() => {
+                overlay.classList.add('active');
+            }, 10);
+            
+            // Load and display content
+            setTimeout(() => {
+                displayTextContent(content);
+            }, 300);
+            
+            console.log('Text overlay should be visible now');
+        }
+
+        // Display text content with proper formatting
+        function displayTextContent(content) {
+            const textContent = document.getElementById('textContent');
+            
+            if (!textContent) {
+                console.error('Text content element not found');
+                return;
+            }
+            
+            let textContentString = '';
+            
+            // Handle different content types
+            if (typeof content === 'object' && content !== null) {
+                // Kirby content object
+                if (content.value !== null && content.value !== undefined) {
+                    textContentString = content.value;
+                } else if (content.content) {
+                    textContentString = content.content;
+                } else {
+                    textContentString = JSON.stringify(content, null, 2);
+                }
+            } else if (typeof content === 'string') {
+                textContentString = content;
+            } else {
+                textContentString = 'Inhalt konnte nicht geladen werden.';
+            }
+            
+            console.log('Processing text content:', textContentString);
+            
+            // Format text content
+            if (textContentString && textContentString.trim() !== '') {
+                // Convert line breaks and paragraphs
+                const formattedText = textContentString
+                    .replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n')
+                    .replace(/\n\n+/g, '</p><p>')
+                    .replace(/\n/g, '<br>');
+                
+                textContent.innerHTML = `<p>${formattedText}</p>`;
+            } else {
+                textContent.innerHTML = '<div class="text-error">Kein Inhalt verfügbar oder Inhalt konnte nicht geladen werden.</div>';
+            }
+        }
+
+        // Load text file content from server
+        async function loadTextFileContent(path, title) {
+            console.log('Loading text file:', path, title);
+            
+            try {
+                const response = await fetch(`/api/textfile-content${path}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'ok' && data.content) {
+                    showTextOverlay(title, data.content, path);
+                } else {
+                    console.error('Failed to load text file content:', data);
+                    showTextOverlay(title, 'Fehler beim Laden der Datei.', path);
+                }
+            } catch (error) {
+                console.error('Failed to load text file content:', error);
+                showTextOverlay(title, `Fehler beim Laden: ${error.message}`, path);
+            }
+        }
+
+        // Hide text overlay
+        function hideTextOverlay() {
+            console.log('hideTextOverlay called');
+            const overlay = document.getElementById('textOverlay');
+            
+            if (overlay) {
+                // Start fade out
+                overlay.classList.remove('active');
+                
+                // Hide after fade completes
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+                
+                console.log('Text overlay fading out');
+            } else {
+                console.error('Text overlay element not found');
+            }
+        }
+        
+        // Keyboard navigation - ERWEITERT
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                // Close About overlay
                 const aboutOverlay = document.querySelector('.about-overlay');
                 if (aboutOverlay) {
                     hideAboutPage();
+                    return;
                 }
                 
+                // Close Image overlay
                 const imageOverlay = document.getElementById('imageOverlay');
                 if (imageOverlay && imageOverlay.classList.contains('active')) {
                     hideImageOverlay();
+                    return;
+                }
+                
+                // Close Text overlay
+                const textOverlay = document.getElementById('textOverlay');
+                if (textOverlay && textOverlay.classList.contains('active')) {
+                    hideTextOverlay();
+                    return;
                 }
             }
         });
     </script>
 </body>
-</html> 
+</html>
