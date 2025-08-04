@@ -38,14 +38,19 @@ tabs:
         max: 1
         create:
           - about
-  desktop:
+ desktop:
     label: Desktop Images
     sections:
-      desktop_images:
-        type: files
-        label: Background Images
-        layout: cards
-        info: "{{ file.dimensions }} - {{ file.niceSize }}"
-        accept:
-          extension: jpg, jpeg, png, gif, webp
-        help: Upload background images for the desktop. One will be randomly selected each time the page loads.
+      desktop_images_info:
+        type: info
+        text: Desktop background images are managed in a hidden page. Create or manage the page below.
+      desktop_images_page:
+        type: pages
+        label: Desktop Images Manager
+        template: desktop-images
+        parent: site
+        max: 1
+        create:
+          - desktop-images
+        status: all
+        info: "{{ page.files.count }} background images"

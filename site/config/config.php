@@ -347,24 +347,34 @@ return [
                 'action' => function () {
                     $images = [];
                     
-                    $desktopPath = kirby()->root('content') . '/_desktop-images';
+                    // Versuche alle möglichen Wege
+                    $desktopPage = site()->find('_desktop-images');
                     
-                    if (is_dir($desktopPath)) {
-                        $files = scandir($desktopPath);
-                        
-                        foreach ($files as $file) {
-                            if ($file !== '.' && $file !== '..' && !str_ends_with($file, '.txt')) {
-                                $filePath = $desktopPath . '/' . $file;
-                                if (is_file($filePath)) {
-                                    $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-                                    if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                                        $images[] = [
-                                            'url' => '/content/_desktop-images/' . urlencode($file),
-                                            'filename' => $file,
-                                            'size' => filesize($filePath)
-                                        ];
-                                    }
-                                }
+                    if (!$desktopPage) {
+                        $desktopPage = site()->drafts()->find('_desktop-images');
+                    }
+                    
+                    if (!$desktopPage) {
+                        $desktopPage = site()->children()->find('_desktop-images');
+                    }
+                    
+                    if (!$desktopPage) {
+                        // Versuche ohne Unterstrich
+                        $desktopPage = site()->find('desktop-images');
+                    }
+                    
+                    if (!$desktopPage) {
+                        $desktopPage = site()->drafts()->find('desktop-images');
+                    }
+                    
+                    if ($desktopPage) {
+                        foreach ($desktopPage->files() as $file) {
+                            if ($file->type() == 'image') {
+                                $images[] = [
+                                    'url' => $file->url(),
+                                    'filename' => $file->filename(),
+                                    'size' => $file->niceSize()
+                                ];
                             }
                         }
                     }
