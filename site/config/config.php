@@ -313,7 +313,8 @@ return [
                             'location' => $contact->about_location()->value(),
                             'phone' => $contact->about_phone()->value(),
                             'email' => $contact->about_email()->value()
-                        ]
+                        ],
+
                     ];
                 }
             ],
@@ -335,7 +336,7 @@ return [
                     return [
                         'status' => 'ok',
                         'title' => $about->title()->value(),
-                        'content' => $about->about_text()->value()
+                        'content' => $about->about_text()->kt()->value()
                     ];
                 }
             ],

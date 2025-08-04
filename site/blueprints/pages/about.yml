@@ -4,4 +4,8 @@ fields:
     label: About/Contact Text
     type: textarea
     size: large
-    required: true 
+    required: true
+    markdown: true
+    buttons:
+      - link
+      - email 

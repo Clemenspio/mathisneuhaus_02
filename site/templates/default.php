@@ -15,10 +15,6 @@
     
     <!-- About Overlay - Outside of finder -->
     <div class="about-overlay" id="aboutOverlay" style="display: none;">
-        <div class="about-header">
-            <button class="back-button" onclick="hideAboutPage()">←</button>
-            <span class="site-title" onclick="hideAboutPage()">FILES</span>
-        </div>
         <div class="about-text" id="aboutText">
             <div class="loading">
                 <div class="spinner"></div>
@@ -62,7 +58,7 @@
                             <svg class="user-icon" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                             </svg>
-                            <span class="site-title" onclick="showAboutPage()">Mathis Neuhaus</span>
+                            <span class="site-title" id="siteTitle" onclick="toggleAboutPage()">Mathis Neuhaus</span>
                         </div>
             
             <!-- Main Content -->
@@ -347,21 +343,46 @@
             return icons[type] || '<img src="/assets/icons/Textfile.svg" alt="File" class="svg-icon">';
         }
 
+        // Toggle about page function
+function toggleAboutPage() {
+    const finderContainer = document.getElementById('finderContainer');
+    
+    if (finderContainer.classList.contains('slide-down')) {
+        // In slide-down state, hide about page
+        console.log('Toggle: hiding about page');
+        hideAboutPage();
+    } else {
+        // In normal state, show about page
+        console.log('Toggle: showing about page');
+        showAboutPage();
+    }
+    
+    // Stop event propagation to prevent double handling
+    event.stopPropagation();
+}
+
         // Show about overlay
 function showAboutPage() {
     const finderContainer = document.getElementById('finderContainer');
     const aboutOverlay = document.getElementById('aboutOverlay');
+    const aboutText = document.getElementById('aboutText');
     
-    // Slide finder down
+    // Slide finder down with normal animation
     finderContainer.classList.add('slide-down');
     
-    // Show about overlay
+    // Add bounce effect at the end
+    setTimeout(() => {
+        finderContainer.classList.add('bounce-end');
+    }, 500);
+    
+    // Show about overlay and fade in text
     setTimeout(() => {
         aboutOverlay.style.display = 'flex';
         setTimeout(() => {
             aboutOverlay.classList.add('active');
+            aboutText.classList.add('fade-in');
         }, 10);
-    }, 200);
+    }, 100);
     
     // Load about content
     loadAboutContent();
@@ -371,15 +392,29 @@ function showAboutPage() {
 function hideAboutPage() {
     const finderContainer = document.getElementById('finderContainer');
     const aboutOverlay = document.getElementById('aboutOverlay');
+    const aboutText = document.getElementById('aboutText');
     
-    // Hide about overlay
-    aboutOverlay.classList.remove('active');
+    // Remove any existing bounce classes
+    finderContainer.classList.remove('bounce-end', 'bounce-mid');
     
-    // Slide finder back up
+    // Fade out text and start slide back with normal animation
+    aboutText.classList.remove('fade-in');
+    finderContainer.classList.remove('slide-down');
+    
+    // Add bounce effect in the middle of return animation
     setTimeout(() => {
-        finderContainer.classList.remove('slide-down');
+        finderContainer.classList.add('bounce-mid');
+        // Remove bounce after it completes
+        setTimeout(() => {
+            finderContainer.classList.remove('bounce-mid');
+        }, 200);
+    }, 250);
+    
+    // Hide about overlay after animation
+    setTimeout(() => {
+        aboutOverlay.classList.remove('active');
         aboutOverlay.style.display = 'none';
-    }, 300);
+    }, 400);
 }
         
         // Load about content
@@ -390,7 +425,7 @@ function hideAboutPage() {
                 
                 if (data.status === 'ok') {
                     const aboutText = document.getElementById('aboutText');
-                    aboutText.innerHTML = data.content.replace(/\n/g, '<br>');
+                    aboutText.innerHTML = data.content;
                 } else {
                     const aboutText = document.getElementById('aboutText');
                     aboutText.innerHTML = 'About information not available';
@@ -630,6 +665,112 @@ document.addEventListener('keydown', function(e) {
             hideTextOverlay();
             return;
         }
+    }
+});
+
+// Click handler for finder container when partially visible
+document.addEventListener('DOMContentLoaded', function() {
+    const finderContainer = document.getElementById('finderContainer');
+    const aboutOverlay = document.getElementById('aboutOverlay');
+    const siteTitle = document.querySelector('.site-title');
+    
+    // Hover effect for site title
+    if (siteTitle) {
+        siteTitle.addEventListener('mouseenter', function() {
+            if (!finderContainer.classList.contains('slide-down')) {
+                finderContainer.classList.add('hover-effect');
+            }
+        });
+        
+        siteTitle.addEventListener('mouseleave', function() {
+            finderContainer.classList.remove('hover-effect');
+        });
+        
+
+    }
+    
+    // Click handler for finder container when partially visible
+    finderContainer.addEventListener('click', function(e) {
+        console.log('Finder clicked, slide-down state:', finderContainer.classList.contains('slide-down'));
+        console.log('Click target:', e.target);
+        console.log('Click currentTarget:', e.currentTarget);
+        
+        // Only handle clicks if the container is in slide-down state
+        if (finderContainer.classList.contains('slide-down')) {
+            // Don't trigger if clicking on interactive elements
+            if (e.target.closest('.finder-item') || 
+                e.target.closest('.finder-columns') ||
+                e.target.closest('.site-title')) {
+                console.log('Clicked on interactive element, ignoring');
+                return;
+            }
+            
+            console.log('Triggering hideAboutPage from finder click');
+            // Hide about page and bring finder back
+            hideAboutPage();
+            e.stopPropagation(); // Prevent event from bubbling to document
+            e.preventDefault(); // Prevent any default behavior
+        }
+    });
+    
+    // Additional click handler specifically for slide-down state
+    finderContainer.addEventListener('mousedown', function(e) {
+        if (finderContainer.classList.contains('slide-down')) {
+            console.log('Finder mousedown in slide-down state');
+            // Don't trigger if clicking on interactive elements (except site-title in slide-down state)
+            if (e.target.closest('.finder-item') || 
+                e.target.closest('.finder-columns')) {
+                console.log('Mousedown on interactive element, ignoring');
+                return;
+            }
+            
+            console.log('Triggering hideAboutPage from finder mousedown');
+            hideAboutPage();
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    });
+    
+    // Click handler for background image when about is active
+    document.addEventListener('click', function(e) {
+        const aboutOverlay = document.getElementById('aboutOverlay');
+        
+        // Only handle clicks if about overlay is active
+        if (aboutOverlay && aboutOverlay.classList.contains('active')) {
+            // Don't trigger if clicking on the finder
+            if (e.target.closest('.finder-container')) {
+                return;
+            }
+            
+            // Don't trigger if clicking on the about text content
+            if (e.target.closest('.about-text')) {
+                return;
+            }
+            
+            console.log('Triggering hideAboutPage from background click');
+            // Hide about page and bring finder back
+            hideAboutPage();
+        }
+    });
+    
+    // Also handle clicks on the background image directly
+    const backgroundImage = document.getElementById('backgroundImage');
+    if (backgroundImage) {
+        backgroundImage.addEventListener('click', function(e) {
+            const aboutOverlay = document.getElementById('aboutOverlay');
+            const finderContainer = document.getElementById('finderContainer');
+            
+            // If about overlay is active, hide it
+            if (aboutOverlay && aboutOverlay.classList.contains('active')) {
+                console.log('Triggering hideAboutPage from background image click');
+                hideAboutPage();
+            } 
+            // If finder is in normal state, show about page
+            else if (finderContainer && !finderContainer.classList.contains('slide-down')) {
+                console.log('Triggering showAboutPage from background image click');
+                showAboutPage();
+            }
+        });
     }
 });
     </script>

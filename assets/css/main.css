@@ -45,12 +45,17 @@
   /* Main Finder Interface */
   .finder-interface {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    pointer-events: none;
+  }
+  
+  .finder-container {
+    pointer-events: auto;
   }
   
   .finder-container {
@@ -68,11 +73,28 @@
 
   /* Finder container slide animation */
 .finder-container {
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s ease, opacity 0.3s ease;
+}
+
+.finder-container.hover-effect {
+  transform: translateY(10px);
 }
 
 .finder-container.slide-down {
-  transform: translateY(calc(100vh + 100px));
+  transform: translateY(calc(100vh - 20vh));
+  pointer-events: auto;
+}
+
+.finder-container.slide-down:hover {
+  transform: translateY(calc(100vh - 20vh - 10px));
+}
+
+.finder-container.slide-down.bounce-end {
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.finder-container.slide-down.bounce-mid {
+  transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
   
   /* ==========================================================================
@@ -130,6 +152,9 @@
     border-right: none;
   }
   
+  /* ==========================================================================
+     5. ITEM LIST STYLES
+     ========================================================================== */
   
   /* Finder Items */
   .items-list {
@@ -158,7 +183,7 @@
     color: white;
   }
   
-
+ 
   
   .item-content {
     display: flex;
@@ -181,8 +206,8 @@
     line-height: 1.3;
   }
   
-
-  
+ 
+   
   /* ==========================================================================
      5. ICONS & VISUAL ELEMENTS
      ========================================================================== */
@@ -212,7 +237,7 @@
     transition: transform 0.2s ease;
     filter: drop-shadow(0px 0px 2.36px rgba(0, 0, 0, 0.22));
   }
-
+ 
   .image-thumbnail {
     max-width: 40px;
     max-height: 40px;
@@ -304,7 +329,7 @@
     object-fit: contain;
     display: block;
   }
-
+ 
   /* Text File Overlay - NEU HINZUFÜGEN */
   .text-overlay {
     position: fixed;
@@ -342,8 +367,8 @@
     overflow: hidden;
   }
   
-
-  
+ 
+   
   /* Scrollbarer Text-Inhalt */
   .text-content {
     flex: 1;
@@ -431,7 +456,6 @@
   
   .text-close-btn:hover {
     background-color: #f0f0f0;
-    color: #333;
   }
   
   /* Loading State */
@@ -462,69 +486,47 @@
   }
   
   /* About Overlay */
-.about-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: none;
-  flex-direction: column;
-  color: #FFFFFF;
-  z-index: 10;
-  background: transparent;
-}
-
-.about-overlay.active {
-  display: flex;
-}
-
-.about-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 40px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-}
-
-.about-header .user-icon {
-  color: #FFFFFF;
-}
-
-.about-header .site-title {
-  color: #FFFFFF;
-  margin-right: auto;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.about-header .site-title:hover {
-  opacity: 0.7;
-}
-
-.about-text {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  text-align: center;
-  font-weight: 400;
-  font-size: 48px;
-  line-height: 54px;
-  color: #FFFFFF;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Finder container slide animation */
-.finder-container {
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.finder-container.slide-down {
-  transform: translateY(calc(100vh + 100px));
-}
+ .about-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   display: none;
+   align-items: center;
+   justify-content: center;
+   color: #FFFFFF;
+   z-index: 1;
+   background: transparent;
+ }
+ 
+ .about-overlay.active {
+   display: flex;
+ }
+ 
+ .about-text {
+   text-align: center;
+   font-weight: 400;
+   font-size: 62px;
+   line-height: 60px;
+   color: #FFFFFF;
+   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+   max-width: 80%;
+   padding: 60px;
+   opacity: 0;
+   transition: opacity 0.3s ease;
+   cursor: text;
+   user-select: text;
+   -webkit-user-select: text;
+   -moz-user-select: text;
+   -ms-user-select: text;
+ }
+ 
+ .about-text.fade-in {
+   opacity: 1;
+ }
+ 
+ 
   
   /* Modal Overlay */
   .modal-overlay {
@@ -580,6 +582,13 @@
     font-size: 24px;
     cursor: pointer;
     color: #666;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
   }
   
   /* ==========================================================================
@@ -595,11 +604,11 @@
     color: #fff;
     gap: 12px;
   }
-
+ 
   /* About overlay loading state */
-.about-overlay .loading {
-  color: #FFFFFF;
-}
+ .about-overlay .loading {
+   color: #FFFFFF;
+ }
   
   .spinner {
     width: 20px;
@@ -731,4 +740,25 @@
       line-height: 38px;
       padding: 20px;
     }
+  }
+  
+  /* ==========================================================================
+     12. ABOUT PAGE LINK STYLES
+     ========================================================================== */
+  
+  .about-content a,
+  .about-text a {
+    color: #FFFFFF;
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+  }
+  
+  .about-content a:hover,
+  .about-text a:hover {
+    opacity: 0.8;
+  }
+  
+  .about-content a:visited,
+  .about-text a:visited {
+    color: #FFFFFF;
   }
