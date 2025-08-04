@@ -10,12 +10,27 @@
     <link rel="stylesheet" href="<?= url('assets/css/main.css') ?>">
 </head>
 <body>
-                                    <!-- Background Image -->
-                <div class="background-image" id="backgroundImage"></div>
-            
-                <!-- Finder Interface -->
-                <div class="finder-interface">
-                    <div class="finder-container">
+    <!-- Background Image -->
+    <div class="background-image" id="backgroundImage"></div>
+    
+    <!-- About Overlay - Outside of finder -->
+    <div class="about-overlay" id="aboutOverlay" style="display: none;">
+        <div class="about-header">
+            <button class="back-button" onclick="hideAboutPage()">←</button>
+            <span class="site-title" onclick="hideAboutPage()">FILES</span>
+        </div>
+        <div class="about-text" id="aboutText">
+            <div class="loading">
+                <div class="spinner"></div>
+                Loading about information...
+            </div>
+        </div>
+    </div>
+    
+    <!-- Finder Interface -->
+    <div class="finder-interface">
+        <div class="finder-container" id="finderContainer">
+
                         <!-- Hover Background within Container -->
                         <div class="finder-hover-bg" id="finderHoverBg"></div>
                         
@@ -333,89 +348,39 @@
         }
 
         // Show about overlay
-        function showAboutPage() {
-            const finderContainer = document.querySelector('.finder-container');
-            const finderColumns = document.getElementById('finderColumns');
-            const finderHeader = document.querySelector('.finder-header');
-            
-            // Create about content
-            const aboutContent = document.createElement('div');
-            aboutContent.className = 'about-overlay';
-            aboutContent.style.opacity = '0';
-            aboutContent.innerHTML = `
-                <div class="about-header">
-                    <button class="back-button" onclick="hideAboutPage()">←</button>
-                    <span class="site-title" onclick="hideAboutPage()">FILES</span>
-                </div>
-                <div class="about-text" id="aboutText">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        Loading about information...
-                    </div>
-                </div>
-            `;
-            
-            finderContainer.appendChild(aboutContent);
-            
-            // Fade out finder content
-            finderColumns.style.transition = 'opacity 0.3s ease';
-            finderHeader.style.transition = 'opacity 0.3s ease';
-            finderColumns.style.opacity = '0';
-            finderHeader.style.opacity = '0';
-            
-            // Make container black with transition
-            finderContainer.style.transition = 'background-color 0.3s ease, border 0.3s ease, box-shadow 0.3s ease';
-            finderContainer.style.backgroundColor = '#000000';
-            finderContainer.style.border = '3px solid #000000';
-            finderContainer.style.boxShadow = '10px 14px 14px rgba(0, 0, 0, 0.35)';
-            
-            // Fade in about content
-            setTimeout(() => {
-                finderColumns.style.display = 'none';
-                finderHeader.style.display = 'none';
-                aboutContent.style.opacity = '1';
-            }, 300);
-            
-            // Load about content
-            loadAboutContent();
-        }
+function showAboutPage() {
+    const finderContainer = document.getElementById('finderContainer');
+    const aboutOverlay = document.getElementById('aboutOverlay');
+    
+    // Slide finder down
+    finderContainer.classList.add('slide-down');
+    
+    // Show about overlay
+    setTimeout(() => {
+        aboutOverlay.style.display = 'flex';
+        setTimeout(() => {
+            aboutOverlay.classList.add('active');
+        }, 10);
+    }, 200);
+    
+    // Load about content
+    loadAboutContent();
+}
         
         // Hide about overlay
-        function hideAboutPage() {
-            const finderContainer = document.querySelector('.finder-container');
-            const finderColumns = document.getElementById('finderColumns');
-            const finderHeader = document.querySelector('.finder-header');
-            const aboutOverlay = document.querySelector('.about-overlay');
-            
-            if (aboutOverlay) {
-                // Fade out about content
-                aboutOverlay.style.transition = 'opacity 0.3s ease';
-                aboutOverlay.style.opacity = '0';
-                
-                // Restore container styling with transition
-                finderContainer.style.transition = 'background-color 0.3s ease, border 0.3s ease, box-shadow 0.3s ease';
-                finderContainer.style.backgroundColor = '';
-                finderContainer.style.border = '';
-                finderContainer.style.boxShadow = '';
-                
-                // Show finder content with fade in
-                setTimeout(() => {
-                    finderColumns.style.display = 'flex';
-                    finderHeader.style.display = 'flex';
-                    finderColumns.style.transition = 'opacity 0.3s ease';
-                    finderHeader.style.transition = 'opacity 0.3s ease';
-                    finderColumns.style.opacity = '1';
-                    finderHeader.style.opacity = '1';
-                    
-                    // Remove about overlay after fade
-                    setTimeout(() => {
-                        if (aboutOverlay) {
-                            aboutOverlay.remove();
-                        }
-                    }, 300);
-                }, 300);
-            }
-        }
+function hideAboutPage() {
+    const finderContainer = document.getElementById('finderContainer');
+    const aboutOverlay = document.getElementById('aboutOverlay');
+    
+    // Hide about overlay
+    aboutOverlay.classList.remove('active');
+    
+    // Slide finder back up
+    setTimeout(() => {
+        finderContainer.classList.remove('slide-down');
+        aboutOverlay.style.display = 'none';
+    }, 300);
+}
         
         // Load about content
         async function loadAboutContent() {
@@ -645,31 +610,28 @@
             }
         }
         
-        // Keyboard navigation - ERWEITERT
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                // Close About overlay
-                const aboutOverlay = document.querySelector('.about-overlay');
-                if (aboutOverlay) {
-                    hideAboutPage();
-                    return;
-                }
-                
-                // Close Image overlay
-                const imageOverlay = document.getElementById('imageOverlay');
-                if (imageOverlay && imageOverlay.classList.contains('active')) {
-                    hideImageOverlay();
-                    return;
-                }
-                
-                // Close Text overlay
-                const textOverlay = document.getElementById('textOverlay');
-                if (textOverlay && textOverlay.classList.contains('active')) {
-                    hideTextOverlay();
-                    return;
-                }
-            }
-        });
+       // Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const aboutOverlay = document.getElementById('aboutOverlay');
+        if (aboutOverlay && aboutOverlay.classList.contains('active')) {
+            hideAboutPage();
+            return;
+        }
+        
+        const imageOverlay = document.getElementById('imageOverlay');
+        if (imageOverlay && imageOverlay.classList.contains('active')) {
+            hideImageOverlay();
+            return;
+        }
+        
+        const textOverlay = document.getElementById('textOverlay');
+        if (textOverlay && textOverlay.classList.contains('active')) {
+            hideTextOverlay();
+            return;
+        }
+    }
+});
     </script>
 </body>
 </html>
