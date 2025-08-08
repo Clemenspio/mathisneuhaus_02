@@ -156,6 +156,37 @@
      5. ITEM LIST STYLES
      ========================================================================== */
   
+  /* Path Section Styles */
+  .path-section {
+    padding: 20px;
+    border-bottom: 1px solid #E5E5E5;
+    background: #F8F8F8;
+  }
+  
+  .path-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  
+  .content-section {
+    padding: 20px;
+  }
+  
+  .content-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
   /* Finder Items */
   .items-list {
     padding: 8px 0;
@@ -173,14 +204,25 @@
   }
   
   .finder-item:hover {
-    background-color: #000000;
+    background-color: #00FF00;
     transform: translateX(2px);
-    color: #FFFFFF;
+    color: #000000;
   }
   
   .finder-item.selected {
     background-color: #000000;
     color: white;
+  }
+  
+  /* Aktive Pfad-Elemente - zeigen den aktuellen Navigationspfad */
+  .finder-item.active-path {
+    background-color: #00FF00;
+    color: #000000;
+  }
+  
+  .finder-item.active-path:hover {
+    background-color: #00FF00;
+    color: #000000;
   }
   
  
@@ -486,47 +528,86 @@
   }
   
   /* About Overlay */
- .about-overlay {
-   position: fixed;
-   top: 0;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   display: none;
-   align-items: center;
-   justify-content: center;
-   color: #FFFFFF;
-   z-index: 1;
-   background: transparent;
- }
- 
- .about-overlay.active {
-   display: flex;
- }
- 
- .about-text {
-   text-align: center;
-   font-weight: 400;
-   font-size: 62px;
-   line-height: 60px;
-   color: #FFFFFF;
-   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-   max-width: 80%;
-   padding: 60px;
-   opacity: 0;
-   transition: opacity 0.3s ease;
-   cursor: text;
-   user-select: text;
-   -webkit-user-select: text;
-   -moz-user-select: text;
-   -ms-user-select: text;
- }
- 
- .about-text.fade-in {
-   opacity: 1;
- }
- 
- 
+.about-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  align-items: flex-start; /* Changed from center to flex-start */
+  justify-content: center;
+  color: #FFFFFF;
+  z-index: 1;
+  background: transparent;
+  overflow-y: auto; /* Make the entire overlay scrollable */
+  overflow-x: hidden;
+  
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.about-overlay.active {
+  display: flex;
+}
+
+.about-overlay::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Webkit browsers */
+}
+
+.about-text {
+  text-align: center;
+  font-weight: 400;
+  font-size: 62px;
+  line-height: 64px;
+  color: #FFFFFF;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  max-width: 80%;
+  padding: 25vh 60px 120px 60px; /* Start content in middle of screen */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+.about-text.fade-in {
+  opacity: 1;
+}
+
+.about-text p {
+  margin: 0;
+  padding: 0;
+}
+
+.about-text p + p {
+  margin-top: 1em;
+}
+
+/* About text content styling */
+.about-text h1,
+.about-text h2,
+.about-text p {
+  font-size: 62px;
+  line-height: 60px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.about-text .email-info {
+  font-size: 62px;
+  line-height: 60px;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* Hide scrollbar for about text */
+.about-text::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Webkit browsers */
+}
   
   /* Modal Overlay */
   .modal-overlay {

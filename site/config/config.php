@@ -278,48 +278,6 @@ return [
             ],
             
             [
-                'pattern' => 'contact',
-                'method' => 'GET',
-                'auth' => false,
-                'action' => function () {
-                    $contact = page('contact');
-                    
-                    if (!$contact) {
-                        return [
-                            'status' => 'error',
-                            'message' => 'Contact page not found'
-                        ];
-                    }
-                    
-                    $social = [];
-                    if ($contact->social()->isNotEmpty()) {
-                        foreach ($contact->social()->toStructure() as $link) {
-                            $social[] = [
-                                'platform' => $link->platform()->value(),
-                                'url' => $link->url()->value()
-                            ];
-                        }
-                    }
-                    
-                    return [
-                        'status' => 'ok',
-                        'email' => $contact->email()->value(),
-                        'phone' => $contact->phone()->value(),
-                        'address' => $contact->address()->value(),
-                        'social' => $social,
-                        'about' => [
-                            'name' => $contact->about_name()->value(),
-                            'subtitle' => $contact->about_subtitle()->value(),
-                            'location' => $contact->about_location()->value(),
-                            'phone' => $contact->about_phone()->value(),
-                            'email' => $contact->about_email()->value()
-                        ],
-
-                    ];
-                }
-            ],
-            
-            [
                 'pattern' => 'about',
                 'method' => 'GET',
                 'auth' => false,
@@ -336,7 +294,7 @@ return [
                     return [
                         'status' => 'ok',
                         'title' => $about->title()->value(),
-                        'content' => $about->about_text()->kt()->value()
+                        'content' => $about->about_text()->value()
                     ];
                 }
             ],
@@ -422,33 +380,6 @@ return [
                             'has_content' => $textfile->content()->isNotEmpty(),
                             'content_fields' => array_keys($textfile->content()->toArray())
                         ]
-                    ];
-                }
-            ],
-            
-            [
-                'pattern' => 'debug-textfile/(:all)',
-                'method' => 'GET',
-                'auth' => false,
-                'action' => function ($path) {
-                    $textfile = page($path);
-                    
-                    if (!$textfile) {
-                        return [
-                            'status' => 'error',
-                            'message' => 'Textfile not found'
-                        ];
-                    }
-                    
-                    return [
-                        'status' => 'ok',
-                        'title' => $textfile->title()->value(),
-                        'template' => $textfile->intendedTemplate(),
-                        'has_content' => $textfile->content()->isNotEmpty(),
-                        'content_fields' => array_keys($textfile->content()->toArray()),
-                        'all_content' => $textfile->content()->toArray(),
-                        'content_value' => $textfile->content()->value(),
-                        'content_kt' => $textfile->content()->kt()->value()
                     ];
                 }
             ]

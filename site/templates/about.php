@@ -14,7 +14,7 @@
             </div>
         
         <div class="about-content">
-            <?= $page->about_text()->kt() ?>
+            <?= $page->about_text()->kirbytext() ?>
         </div>
         
         <button class="back-button" onclick="goBack()">← Back to Finder</button>

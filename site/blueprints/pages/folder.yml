@@ -5,6 +5,8 @@ status:
   listed: true
 create:
   status: listed
+options:
+  template: finder
 columns:
   - width: 2/3
     sections:
